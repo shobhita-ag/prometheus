@@ -1,0 +1,41 @@
+<!-- prometheus/login/templates/index.html-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to Prometheus</title>
+  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+</head>
+<body>
+	<div id="fb-root"></div>
+		<script>(function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0];
+		  if (d.getElementById(id)) return;
+		  js = d.createElement(s); js.id = id;
+		  js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.2&appId=2193426884033967';
+		  fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+		</script>
+		<script type="text/javascript">
+			function onlogin(){
+				console.log("okok hello");
+				FB.getLoginStatus(function(response) {
+				  if (response.status === 'connected') {
+				    var accessToken = response.authResponse.accessToken;
+				    var userId = response.authResponse.userID;
+				    $.post( "/fetchUserData", { accessToken:accessToken, userId:userId }, function( data ) {
+  						console.log(data);
+  						$('#image').attr("src", data.data.url);
+					});
+				  }
+				});
+			};
+		</script>
+	<div class="fb-login-button" data-size="medium" data-button-type="login_with" data-auto-logout-link="false" data-use-continue-as="true" data-onlogin="onlogin"></div>
+	<br/>
+	<img src="" id="image">
+  <a href="{% url 'home' %}">Go Home</a>
+  <a href="{% url 'about' %}">About This Site</a>
+</body>
+</html>
