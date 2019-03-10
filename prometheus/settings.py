@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'login',
+    'portal',
 ]
 
 MIDDLEWARE = [
@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'test123',
-        'HOST': 'ec2-13-233-88-243.ap-south-1.compute.amazonaws.com',
+        'HOST': 'ec2-13-234-78-152.ap-south-1.compute.amazonaws.com',
         'PORT': '5432',
     }
 }
