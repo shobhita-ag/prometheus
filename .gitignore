@@ -1,3 +1,4 @@
 *.pyc
 prometheus/settings.py
 prometheus.pem
+staticfiles
