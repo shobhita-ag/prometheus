@@ -11,7 +11,6 @@
         <link rel="stylesheet" href="{% static "css/v-accordion.css" %}" type = "text/css">
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
         <script type="text/javascript" src = "{% static "js/angular.min.js" %}"></script>
-        <script type="text/javascript" src = "{% static "js/dashboard.js" %}?_v5"></script>
         <script type="text/javascript" src = "{% static "js/angular-animate.js" %}"></script>
         <script type="text/javascript" src = "{% static "js/angular-spinner.min.js" %}"></script>
         <script type="text/javascript" src = "{% static "js/spin.min.js" %}"></script>
@@ -86,18 +85,9 @@
                 $mdIconProvider
                    .iconSet('person', 'img/person_pin.svg', 24)
                    .defaultIconSet('img/person_pin.svg', 24);
-            }])
-            .config(['$mdDateLocaleProvider',function($mdDateLocaleProvider) {
-                $mdDateLocaleProvider.formatDate = function(date) {
-                    return moment(date).format('YYYY-MM-DD');
-                };
-                $mdDateLocaleProvider.parseDate = function(dateString) {
-                    var m = moment(dateString, 'YYYY-MM-DD', true);
-                    return m.isValid() ? m.toDate() : new Date(NaN);
-                };
             }]);
 
-            app.controller('CreateEditOrder', function DashboardCtrl ($scope, $timeout, $q, $http, $mdDialog, $interval, commonUtility, ops_user, order_id) {
+            app.controller('CreateEditOrder', function DashboardCtrl ($scope, $timeout, $q, $http, $window, $mdDialog, $interval, commonUtility, ops_user, order_id) {
                 var self = this;
 
                 self.timer = 0;
@@ -111,29 +101,59 @@
 
                 };
 
-                self.getOrder = function() {
+                self.workTypeChange = function() {
+                    $scope.work_sub_types = self.dropdowndata['work_sub_types'];
+                    var work_sub_types = [];
+                    for (var i = 0; i < $scope.work_sub_types.length; i++) {
+                        if ($scope.work_sub_types[i].work_type_id === self.order_data.work_type) {
+                            work_sub_types.push($scope.work_sub_types[i]);
+                        }
+                    }
+                    $scope.work_sub_types = work_sub_types;
+                    self.order_data.size = null;
+                };
 
-                	self.loadSpinner = true;
-                	self.order_data = [];
-                    self.message = "";
-                    
-                    $http({
-                        url: "/create_edit_order/get_order?order_id=" + order_id,
-                        method: "GET"
-                    })
-                    .then(function(response){
-                        self.show_err = false;
-                    	self.loadSpinner = false;
-                        var response_data = response.data;
-                        self.order_data = response_data["order_data"];
-                        var date = new Date(self.order_data.incoming_date);
-                        self.order_data.incoming_date = moment(date).format('YYYY-MM-DD');;
-                    }, function(error_response) {
-                        var response_data = error_response.data;
-                        commonUtility.displayErrorMsg(response_data["message"]);
-                        self.show_err = true;
-                        self.loadSpinner = false;
-                    });
+                self.shootTypeChange = function() {
+                    $scope.shoot_sub_types = self.dropdowndata['shoot_sub_types'];
+                    var shoot_sub_types = [];
+                    if ([4,5].indexOf(self.order_data.shoot_type) >= 0) {
+                        for (var i = 0; i < $scope.shoot_sub_types.length; i++) {
+                            if ($scope.shoot_sub_types[i].shoot_type_id === self.order_data.shoot_type) {
+                                shoot_sub_types.push($scope.shoot_sub_types[i]);
+                            }
+                        }
+                    }
+                    $scope.shoot_sub_types = shoot_sub_types;
+                    self.order_data.shoot_sub_type = null;
+                };
+
+                self.getOrder = function() {
+                    self.order_data = {};
+                    if (order_id != "None") {
+                    	self.loadSpinner = true;
+                        self.message = "";
+                        
+                        $http({
+                            url: "/create_edit_order/get_order?order_id=" + order_id,
+                            method: "GET"
+                        })
+                        .then(function(response){
+                            self.show_err = false;
+                        	self.loadSpinner = false;
+                            var response_data = response.data;
+                            self.order_data = response_data["order_data"];
+                            self.order_data.incoming_date = new Date(self.order_data.incoming_date);
+                            self.getDropDownData();
+                        }, function(error_response) {
+                            var response_data = error_response.data;
+                            commonUtility.displayErrorMsg(response_data["message"]);
+                            self.show_err = true;
+                            self.loadSpinner = false;
+                        });
+                    }
+                    else {
+                        self.getDropDownData();
+                    }
                 };
 
                 self.getDropDownData = function() {
@@ -156,6 +176,13 @@
                         $scope.shoot_sub_types = self.dropdowndata['shoot_sub_types'];
                         $scope.page_qualities = self.dropdowndata['page_qualities'];
                         $scope.binding_types = self.dropdowndata['binding_types'];
+
+                        // Initialise drop downs
+                        if (self.order_data) {
+                            self.shootTypeChange();
+                            self.workTypeChange();                            
+                        }
+                        
                     }, function(error_response) {
                         var response_data = error_response.data;
                         commonUtility.displayErrorMsg(response_data["message"]);
@@ -177,20 +204,17 @@
                         self.show_err = false;
                         self.loadSpinner = false;
                         var response_data = response.data;
+                        commonUtility.displayErrorMsg(response_data["response"]);
+                        $window.location.href = "/";
                     }, function(error_response) {
                         var response_data = error_response.data;
-                        commonUtility.displayErrorMsg(response_data["message"]);
+                        commonUtility.displayErrorMsg(response_data["response"]);
                         self.show_err = true;
                         self.loadSpinner = false;
                     });
                 };
 
-                $scope.dateChanged = function() {
-                    self.order_data.incoming_date = moment(self.order_data.incoming_date).format('YYYY-MM-DD');
-                }
-
                 self.getOrder();
-                self.getDropDownData();
             });
         </script>
     </head>
@@ -204,7 +228,8 @@
                             <md-button class="md-primary md-raised" flex="20" href="/logout">[[ctrl.user]] - Logout</md-button>
                         </section>
                         <div layout="row" layout-sm="column" layout-align="space-around">
-                            <md-progress-circular ng-hide="ctrl.show_err" layout="space-around" ng-show="ctrl.loadSpinner" class="md-hue-2" md-mode="indeterminate" md-diameter="40"></md-progress-circular>
+                            
+                            <md-progress-circular layout="space-around" ng-show="ctrl.loadSpinner" class="md-hue-2" md-mode="indeterminate" md-diameter="40"></md-progress-circular>
                         </div>
 	                        <md-content class="md-padding">
 	                        <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
@@ -225,8 +250,10 @@
                                             <div ng-message = "required">This is required</div>
                                         </div>
                                         </md-input-container>
+                                    </div>
+                                    <div layout="row">
                                         <div flex-gt-xs>
-                                          <md-datepicker ng-model="ctrl.order_data.incoming_date" ng-change="dateChanged()" md-placeholder="Incoming date"></md-datepicker>
+                                          <md-datepicker ng-model="ctrl.order_data.incoming_date" md-placeholder="Incoming date"></md-datepicker>
                                         </div>
                                     </div>
                                     <div layout="row">
@@ -244,13 +271,10 @@
     							        <md-input-container class="md-block" flex-gt-sm>
     							            <label>Garment Count</label>
     							            <input name="garment_count" ng-model="ctrl.order_data.garment_count"
-    							                   required ng-pattern="/^[0-9]+$/" md-maxlength="10">
+    							                   required ng-pattern="/^[0-9]+$/">
     							            <div ng-messages="create_edit_order_form.garment_count.$error" role="alert" multiple>
     							              <div ng-message="required" class="my-message">This is required.</div>
     							              <div ng-message="pattern" class="my-message">That doesn't look like a valid count
-    							              </div>
-    							              <div ng-message="md-maxlength" class="my-message">
-    							                Max allowed length is 10 integers
     							              </div>
     							            </div>
     							        </md-input-container>
@@ -258,7 +282,7 @@
                                     <div layout="row">
     							        <md-input-container class="md-block" flex-gt-sm>
     							            <label>Shoot Type</label>
-    							            <md-select name="shoot_type" ng-model="ctrl.order_data.shoot_type" required>
+    							            <md-select name="shoot_type" ng-model="ctrl.order_data.shoot_type" ng-change="ctrl.shootTypeChange()" required>
     							              	<md-option value="[[shoot_type.id]]" ng-repeat="shoot_type in shoot_types">
     							              		[[shoot_type.type_name]]
     							          		</md-option>
@@ -270,7 +294,7 @@
     							        </md-input-container>
     							        <md-input-container class="md-block" flex-gt-sm>
     							            <label>Shoot Sub Type</label>
-    							            <md-select name="shoot_sub_type" ng-model="ctrl.order_data.shoot_sub_type" required>
+    							            <md-select name="shoot_sub_type" ng-model="ctrl.order_data.shoot_sub_type" ng-required="ctrl.order_data.shoot_type == 4 || ctrl.order_data.shoot_type == 5" ng-disabled="!ctrl.order_data.shoot_type || shoot_sub_types.length === 0">
     							              	<md-option value="[[shoot_sub_type.id]]" ng-repeat="shoot_sub_type in shoot_sub_types">
     							              		[[shoot_sub_type.sub_type_name]]
     							          		</md-option>
@@ -284,7 +308,7 @@
                                     <div layout="row">
     							        <md-input-container class="md-block" flex-gt-sm>
     							            <label>Work Type</label>
-    							            <md-select name="work_type" ng-model="ctrl.order_data.work_type" required>
+    							            <md-select name="work_type" ng-model="ctrl.order_data.work_type" ng-change="ctrl.workTypeChange()" required>
     							              	<md-option value="[[work_type.id]]" ng-repeat="work_type in work_types">
     							              		[[work_type.type_name]]
     							          		</md-option>
@@ -296,7 +320,7 @@
     							        </md-input-container>
     							        <md-input-container class="md-block" flex-gt-sm>
     							            <label>Size</label>
-    							            <md-select name="work_sub_type" ng-model="ctrl.order_data.size" required>
+    							            <md-select name="work_sub_type" ng-model="ctrl.order_data.size" required ng-disabled="!ctrl.order_data.work_type">
     							              	<md-option value="[[work_sub_type.id]]" ng-repeat="work_sub_type in work_sub_types">
     							              		[[work_sub_type.sub_type_name]]
     							          		</md-option>
@@ -370,6 +394,18 @@
                          						<div ng-message = "required">This is required</div>
                       						</div>						            
     							        </md-input-container>
+                                        <md-input-container class="md-block" flex-gt-sm>
+                                            <label>Page Count</label>
+                                            <input name="book_quantity" ng-model="ctrl.order_data.page_count"
+                                                   required ng-pattern="/^[0-9]+$/">
+                                            <div ng-messages="create_edit_order_form.page_count.$error" role="alert" multiple>
+                                              <div ng-message="required" class="my-message">This is required.</div>
+                                              <div ng-message="pattern" class="my-message">That doesn't look like a valid count
+                                              </div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                    <div layout="row">
     	                                <md-input-container class="md-block" flex-gt-sm>
     	                                    <label>Book Name</label>
     	                                    <input required type="text" name="book_name" ng-model="ctrl.order_data.book_name">
@@ -380,13 +416,10 @@
     							        <md-input-container class="md-block" flex-gt-sm>
     							            <label>Book Quantity</label>
     							            <input name="book_quantity" ng-model="ctrl.order_data.book_quantity"
-    							                   required ng-pattern="/^[0-9]+$/" md-maxlength="10">
+    							                   required ng-pattern="/^[0-9]+$/">
     							            <div ng-messages="create_edit_order_form.book_quantity.$error" role="alert" multiple>
     							              <div ng-message="required" class="my-message">This is required.</div>
     							              <div ng-message="pattern" class="my-message">That doesn't look like a valid count
-    							              </div>
-    							              <div ng-message="md-maxlength" class="my-message">
-    							                Max allowed length is 10 integers
     							              </div>
     							            </div>
     							        </md-input-container>

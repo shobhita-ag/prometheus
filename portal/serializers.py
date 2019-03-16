@@ -1,3 +1,4 @@
+import datetime
 from rest_framework import serializers
 
 from portal.models import GarmentType, ShootType, ShootSubType, WorkType, WorkSubType, \
@@ -11,13 +12,15 @@ class OrderSummarySerializer(serializers.ModelSerializer):
 	garment_type = serializers.SerializerMethodField()
 	work_type = serializers.SerializerMethodField()
 	status = serializers.SerializerMethodField()
+	next_status = serializers.SerializerMethodField()
+	has_next_status_form = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Order
-		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'garment_type', 'work_type', 'status')
+		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'garment_type', 'work_type', 'status', 'next_status', 'has_next_status_form')
 	
 	def get_incoming_date(self, obj):
-		return str(obj.incoming_date)
+		return datetime.datetime.strftime(obj.incoming_date, '%I %b, %Y')
 
 	def get_garment_type(self, obj):
 		return obj.garment_type.type_name
@@ -27,6 +30,12 @@ class OrderSummarySerializer(serializers.ModelSerializer):
 
 	def get_status(self, obj):
 		return obj.get_status_display()
+
+	def get_next_status(self, obj):
+		return obj.get_next_state()
+
+	def get_has_next_status_form(self, obj):
+		return "true";		
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -51,7 +60,7 @@ class OrderSerializer(serializers.ModelSerializer):
 			'binding_type', 'book_name', 'book_quantity', 'has_photo_lamination', 'status')
 
 	def get_incoming_date(self, obj):
-		return str(obj.incoming_date)
+		return datetime.datetime.strftime(obj.incoming_date, '%Y/%m/%d')
 
 	def get_garment_type(self, obj):
 		return obj.garment_type.id

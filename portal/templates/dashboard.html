@@ -11,7 +11,6 @@
         <link rel="stylesheet" href="{% static "css/v-accordion.css" %}" type = "text/css">
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
         <script type="text/javascript" src = "{% static "js/angular.min.js" %}"></script>
-        <script type="text/javascript" src = "{% static "js/dashboard.js" %}?_v5"></script>
         <script type="text/javascript" src = "{% static "js/angular-animate.js" %}"></script>
         <script type="text/javascript" src = "{% static "js/angular-spinner.min.js" %}"></script>
         <script type="text/javascript" src = "{% static "js/spin.min.js" %}"></script>
@@ -68,6 +67,9 @@
                 background-color: #a50000;
                 color: antiquewhite;
             }
+            .defaultcase {
+                text-transform: none;
+            }
         </style>
 
         <script type="text/javascript">
@@ -97,7 +99,27 @@
                 self.loadSpinner = false;
 
                 self.redirectToOrderPage = function(order_id) {
-                    $window.location.href = "/create_edit_order?order_id=" + order_id;
+                    if (order_id && order_id !== '') {
+                        $window.location.href = "/create_edit_order?order_id=" + order_id;
+                    } else {
+                        $window.location.href = "/create_edit_order";
+                    }
+                };
+
+                self.moveToNextStage = function(event, order_id, has_next_status_form) {
+
+                    $mdDialog.show({
+                      controller: DialogController,
+                      templateUrl: 'render_dialog',
+                      parent: angular.element(document.body),
+                      targetEvent: event,
+                      clickOutsideToClose:false
+                    })
+                    .then(function(answer) {
+                      $scope.status = 'You said the information was "' + answer + '".';
+                    }, function() {
+                      $scope.status = 'You cancelled the dialog.';
+                    });
                 };
 
                 self.loadOrderData = function() {
@@ -125,6 +147,17 @@
 
                 self.loadOrderData();
             });
+            function DialogController($scope, $mdDialog) {
+              $scope.hide = function() {
+                $mdDialog.hide();
+              };
+              $scope.cancel = function() {
+                $mdDialog.cancel();
+              };
+              $scope.answer = function(answer) {
+                $mdDialog.hide(answer);
+              };
+            }
         </script>
     </head>
     <body style="padding-top:0px;">
@@ -132,36 +165,42 @@
             <div flex layout="row" layout-align="center center">
                 <div ng-controller="DashboardCtrl as ctrl" layout="column" ng-cloak style="width: -webkit-fill-available;">
                     <md-content class="md-padding">
-                        <section layout="row" layout-align="center center" layout-wrap>
+                        <section layout="row" layout-align="space-between start" layout-wrap>
+                            <md-button class="md-primary" flex="20" ng-click="ctrl.redirectToOrderPage('')">
+                                Create new order
+                            </md-button>
                             <span class="no-border" flex="20"></span> 
-                            <md-button class="md-primary md-raised" flex="20" href="/logout">[[ctrl.user]] - Logout</md-button>
+                            <md-button class="md-primary" flex="20" href="/logout">[[ctrl.user]] - Logout</md-button>
                         </section>
-                        <section class="section">
-                            <div flex layout="row" style="font-size: 12px;">
-                                <span flex="14">Client</span>
-                                <span flex="14">Date</span>   
-                                <span flex="14">Challan Number</span>   
-                                <span flex="14">Garment Type</span>
-                                <span flex="14">Work Type</span>
-                                <span flex="14">Status</span>
-                                <span flex="16"></span>
-                            </div>
+                        <table align="center" id="dashTable">
+                            <thead>
+                                <th>Client</th>
+                                <th>Date</th>   
+                                <th>Challan Number</th>   
+                                <th>Garment Type</th>
+                                <th>Work Type</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </thead>
                             <h2 ng-show="ctrl.show_err" style="text-align: center;">
                                 [[ctrl.message]]
                             </h2>
                             <md-progress-circular ng-hide="ctrl.show_err" layout="column" ng-show="ctrl.loadSpinner" class="md-warn md-hue-3" md-diameter="40"></md-progress-circular>
-                              <div ng-repeat="order in ctrl.order_data" class="zones">
-                                <div flex layout="row" style="font-size: 12px;">
-                                    <span flex="14">[[order.client_name]]</span>
-                                    <span flex="14">[[order.incoming_date]]</span>
-                                    <span flex="14">[[order.client_challan_number]]</span>   
-                                    <span flex="14">[[order.garment_type]]</span>
-                                    <span flex="14">[[order.work_type]]</span>
-                                    <span flex="14">[[order.status]]</span>
-                                    <span flex="16"><md-button class="md-primary md-raised" flex="16" layout="column" layout-align="center center" ng-click="ctrl.redirectToOrderPage(order.id)">Update</md-button></span>
-                                </div>
-                              </div>
-                        </section>
+                            <tbody>
+                                <tr ng-repeat="order in ctrl.order_data" class="zones">
+                                    <td>[[order.client_name]]</td>
+                                    <td>[[order.incoming_date]]</td>
+                                    <td>[[order.client_challan_number]]</td>   
+                                    <td>[[order.garment_type]]</td>
+                                    <td>[[order.work_type]]</td>
+                                    <td>[[order.status]]</td>
+                                    <td>
+                                        <md-button class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, has_next_status_form)">[[order.next_status]]</md-button>
+                                        <md-button class="defaultcase md-primary" layout="column" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)">Update</md-button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </md-content>
                 </div>
             </div>

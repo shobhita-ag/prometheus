@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from rest_framework.views import APIView
@@ -42,6 +44,13 @@ class Login(APIView):
 		else:
 			return render(request, context={'message': 'Invalid user credentials'}, template_name='index.html')
 
+class getNextStatus(APIView):
+
+	def get(self, request):
+		if request.user.is_authenticated():
+			return redirect('dashboard')
+		return Response({"status": "Sent to Shooting"}, status=status.HTTP_200_OK)
+
 
 class Logout(APIView):
 
@@ -57,6 +66,12 @@ class Dashboard(APIView):
 			return redirect('login')
 		return render(request, context={'ops_user': request.user.username}, template_name='dashboard.html')
 
+class RenderDialog(APIView):
+
+	def get(self, request):
+		if not request.user.is_authenticated():
+			return redirect('login')
+		return render(request, template_name='sent_to_shooting_dialog.html')
 
 class CreateEditOrder(APIView):
 
@@ -74,6 +89,10 @@ class CreateEditOrder(APIView):
 		order_id = request.data.get('order_id', None)
 		client_name = order_data.get('client_name', None)
 		incoming_date = order_data.get('incoming_date', None)
+
+		if incoming_date:
+			incoming_date = datetime.datetime.strptime(str(incoming_date), '%Y-%m-%dT%H:%M:%S.%fZ')
+
 		client_challan_number = order_data.get('client_challan_number', None)
 		garment_type = order_data.get('garment_type', None)
 		garment_count = order_data.get('garment_count', None)
@@ -91,7 +110,7 @@ class CreateEditOrder(APIView):
 		has_photo_lamination = order_data.get('has_photo_lamination', None)
 
 		try:
-			if not order_id:
+			if order_id == "None":
 				Order.objects.create(client_name = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
 				garment_type_id = garment_type, garment_count = garment_count, shoot_type_id = shoot_type, shoot_sub_type_id = shoot_sub_type,
 				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, page_count = page_count, outer_page_quality_id = outer_page_quality,
@@ -105,9 +124,9 @@ class CreateEditOrder(APIView):
 				has_photo_lamination = has_photo_lamination)
 		except Exception as e:
 			print("Order creation failed:" + str(e))
-			return Response({"response": "Error in order creation"}, status=HTTP_400_BAD_REQUEST)
+			return Response({"response": "Error in order creation"}, status=status.HTTP_400_BAD_REQUEST)
 
-		return Response({"response": "201 created"}, status=status.HTTP_201_CREATED) 
+		return Response({"response": "Order created"}, status=status.HTTP_201_CREATED) 
 
 
 
