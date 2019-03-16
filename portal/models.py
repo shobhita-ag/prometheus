@@ -99,7 +99,7 @@ class Order(TimeStampedModel):
 	status = FSMIntegerField(default=1, choices=STATUS_CHOICES)
 
 	@transition(field=status, source=[1, 13, 14, 15], target=2)
-	def sent_to_shooting(self):
+	def send_to_shooting(self):
 		pass
 
 	@transition(field=status, source=2, target=3)
@@ -143,32 +143,35 @@ class Order(TimeStampedModel):
 		pass
 
 	@transition(field=status, source=12, target=13)
-	def feedback_changes_started(self):
+	def take_feedback_changes(self):
 		pass
 
 	@transition(field=status, source=13, target=14)
-	def feedback_changes_completed(self):
+	def feedback_changes_started(self):
 		pass
 
 	@transition(field=status, source=14, target=15)
-	def printing_started(self):
+	def feedback_changes_completed(self):
 		pass
 
 	@transition(field=status, source=15, target=16)
-	def printing_completed(self):
+	def printing_started(self):
 		pass
 
 	@transition(field=status, source=16, target=17)
-	def out_for_delivery(self):
-		pass   
+	def printing_completed(self):
+		pass  
 
 	@transition(field=status, source=17, target=18)
-	def delivered(self):
+	def bill_created(self):
 		pass
 
 	@transition(field=status, source=18, target=19)
 	def delivered(self):
-		pass 		                                   
+		pass
+
+	def get_next_state(self):
+		return "Send to Shooting"
 												
 	def __unicode__(self):
 		return self.client_name + " - " + self.client_challan_number

@@ -13,6 +13,8 @@ urlpatterns = [
     url(r'^dashboard/order_data$', views.DashboardOrders.as_view(), name='dashboard_orders'),
     url(r'^create_edit_order/get_order$', views.GetOrder.as_view(), name='get_order'),
     url(r'^create_edit_order/get_drop_down_data$', views.GetDropDownData.as_view(), name='get_drop_down_data'),
+    url(r'^get_next_status$', views.getNextStatus.as_view(), name='get_next_status'),
+    url(r'^render_dialog$', views.RenderDialog.as_view(), name='render_dialog'),
     
     #url(r'^create_order$', views.create_order.as_view(), name='create_order'),
 ]
