@@ -62,7 +62,7 @@ class Order(TimeStampedModel):
 	garment_type = models.ForeignKey(GarmentType)
 	garment_count = models.IntegerField()
 	shoot_type = models.ForeignKey(ShootType)
-	shoot_sub_type = models.ForeignKey(ShootSubType)
+	shoot_sub_type = models.ForeignKey(ShootSubType, null=True)
 	has_blouse_stitch = models.BooleanField()
 	work_type = models.ForeignKey(WorkType)
 	size = models.ForeignKey(WorkSubType)
