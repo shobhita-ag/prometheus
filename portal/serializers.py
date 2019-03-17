@@ -96,4 +96,49 @@ class OrderSerializer(serializers.ModelSerializer):
 		return str(obj.has_photo_lamination)		
 
 
+class ShootSerializer(serializers.ModelSerializer):
 
+	shooting_location = serializers.SerializerMethodField()
+	studio_name = serializers.SerializerMethodField()
+	model_name = serializers.SerializerMethodField()
+	shoot_date = serializers.SerializerMethodField()
+
+	class Meta:
+		model = Shoot
+		fields = ('id', 'shooting_location', 'model_name', 'shoot_date', 'studio_name')
+	
+	def get_shooting_location(self, obj):
+		return obj.shooting_location
+
+	def get_studio_name(self, obj):
+		return obj.studio_name
+
+	def get_model_name(self, obj):
+		return obj.model_name
+
+	def get_shoot_date(self, obj):
+		return datetime.datetime.strftime(obj.shoot_date, '%Y/%m/%d')
+
+
+class PoseCuttingSerializer(serializers.ModelSerializer):
+	
+	number_of_poses = serializers.SerializerMethodField()
+
+	class Meta:
+		model = PoseCutting
+		fields = ('id', 'number_of_poses')
+
+	def get_number_of_poses(self, obj):
+		return obj.number_of_poses
+
+
+class PrintingSerializer(serializers.ModelSerializer):
+
+	folder_number = serializers.SerializerMethodField()
+
+	class Meta:
+		model = Printing
+		fields = ('id', 'folder_number')
+
+	def get_folder_number(self, obj):
+		return obj.folder_number				

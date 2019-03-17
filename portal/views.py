@@ -1,6 +1,7 @@
 import datetime
 
 from django.shortcuts import render
+from django.db import models
 from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from django.shortcuts import render, redirect
@@ -19,7 +20,7 @@ from django.contrib.auth import authenticate, login, logout
 from portal.models import GarmentType, ShootType, ShootSubType, WorkType, WorkSubType, \
 						PageQuality, BindingType, Order, PoseCutting, PoseSelection, ChangesTaken, ChangesImplementation, \
 						Layout, Shoot, ColorCorrection, Printing, BillCreation, Delivery, DummySent
-from portal.serializers import OrderSummarySerializer, OrderSerializer
+from portal.serializers import OrderSummarySerializer, OrderSerializer, ShootSerializer
 
 class HomePage(TemplateView):
 	def get(self, request):
@@ -66,12 +67,40 @@ class Dashboard(APIView):
 			return redirect('login')
 		return render(request, context={'ops_user': request.user.username}, template_name='dashboard.html')
 
+
+class GetDialogData(APIView):
+	
+	def get(self, request):
+		if not request.user.is_authenticated():
+			return redirect('login')
+		
+		next_status = request.GET.get('next_status', None)
+		order_id = request.GET.get('order_id', None)
+
+		from portal.helper import order_next_status_model_map, order_next_status_serializer_map
+		import portal.models
+		try:
+			dialog = getattr(portal.models, order_next_status_model_map[int(next_status)]).objects.get(order=order_id)
+		except Exception as e:
+			return Response(status=status.HTTP_204_NO_CONTENT)
+
+		dialog_data = getattr(portal.serializers, order_next_status_serializer_map[int(next_status)])(dialog).data
+		return Response({"dialog_data" : dialog_data}, status=status.HTTP_200_OK)
+
+
+
 class RenderDialog(APIView):
 
 	def get(self, request):
 		if not request.user.is_authenticated():
 			return redirect('login')
-		return render(request, template_name='sent_to_shooting_dialog.html')
+
+		next_status = request.GET.get('next_status', None)
+		order_id = request.GET.get('order_id', None)
+
+		from portal.helper import order_next_status_template_map
+		return render(request, template_name='dialogs/' + order_next_status_template_map[int(next_status)])
+
 
 class CreateEditOrder(APIView):
 
