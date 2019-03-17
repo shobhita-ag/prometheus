@@ -7,13 +7,13 @@
         </md-toolbar>
         <md-dialog-content>
             <md-content class="md-padding">
-                <div ng-controller="DashboardCtrl as ctrl" flex-sm="100" flex-gt-sm="80" layout-align="center center">
+                <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
                     <form name="printing_dialog_form" method="post">
                         {% csrf_token %}
                           <div layout="row">
                               <md-input-container class="md-block" flex-gt-sm>
                                   <label>Folder number</label>
-                                  <input required type="text" name="folder_number" ng-model="ctrl.dialog_data.folder_number">
+                                  <input required type="text" name="folder_number" ng-model="data.dialog_data.folder_number">
                                   <div ng-messages = "printing_dialog_form.folder_number.$error">
                                       <div ng-message = "required">This is required</div>
                                   </div>

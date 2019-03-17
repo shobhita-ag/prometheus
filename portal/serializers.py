@@ -69,7 +69,9 @@ class OrderSerializer(serializers.ModelSerializer):
 		return obj.shoot_type.id
 
 	def get_shoot_sub_type(self, obj):
-		return obj.shoot_sub_type.id
+		if obj.shoot_sub_type:
+			return obj.shoot_sub_type.id
+		return None
 
 	def get_work_type(self, obj):
 		return obj.work_type.id

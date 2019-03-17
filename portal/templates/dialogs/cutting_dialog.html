@@ -7,13 +7,13 @@
         </md-toolbar>
         <md-dialog-content>
             <md-content class="md-padding">
-                <div ng-controller="DashboardCtrl as ctrl" flex-sm="100" flex-gt-sm="80" layout-align="center center">
+                <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
                     <form name="pose_cutting_dialog_form" method="post">
                         {% csrf_token %}
                           <div layout="row">
                               <md-input-container class="md-block" flex-gt-sm>
                                   <label>Number of poses</label>
-                                  <input name="number_of_poses" ng-model="ctrl.dialog_data.number_of_poses"
+                                  <input name="number_of_poses" ng-model="data.dialog_data.number_of_poses"
                                          required ng-pattern="/^[0-9]+$/">
                                   <div ng-messages="pose_cutting_dialog_form.number_of_poses.$error" role="alert" multiple>
                                     <div ng-message="required" class="my-message">This is required.</div>

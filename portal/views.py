@@ -88,7 +88,6 @@ class GetDialogData(APIView):
 		return Response({"dialog_data" : dialog_data}, status=status.HTTP_200_OK)
 
 
-
 class RenderDialog(APIView):
 
 	def get(self, request):
@@ -100,6 +99,31 @@ class RenderDialog(APIView):
 
 		from portal.helper import order_next_status_template_map
 		return render(request, template_name='dialogs/' + order_next_status_template_map[int(next_status)])
+
+	def post(self, request):
+		if not request.user.is_authenticated():
+			return redirect('login')
+		
+		user = request.data.get('user', None)
+		dialog_data = request.data.get('dialog_data', None)
+		order_id = request.data.get('order_id', None)
+		date = order.data.get('date', None)
+		next_status = order_data.get('next_status', None)
+		next_status = int(next_status)
+
+		from portal.helper import order_next_status_model_map
+		import portal.models
+
+		# try:
+		# 	Order.objects.filter(id=order_id).update(status=next_status)
+		# 	if next_status == 2:
+		# 		Shoot.objects.create(shooting_location = dialog_data.shooting_location, studio_name = dialog_data.studio_name,
+		# 			model_name = dialog_data.model_name, shoot_date = dialog_data.shoot_date, shoot_user = user,
+		# 			start_date = date)
+		# 	elif next_status == 3:
+		# 		Shoot.objects.filter(id = dialog_data.id).update(end_date = date) 
+		# except Exception as e:
+
 
 
 class CreateEditOrder(APIView):
