@@ -1,0 +1,41 @@
+<md-dialog aria-label="Bill creation">
+    <form>
+        <md-toolbar>
+          <div class="md-toolbar-tools">
+            <h2>Bill creation</h2>
+          </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <md-content class="md-padding">
+                <div ng-controller="DashboardCtrl as ctrl" flex-sm="100" flex-gt-sm="80" layout-align="center center">
+                    <form name="bill_creation_dialog_form" method="post">
+                        {% csrf_token %}
+                          <div layout="row">
+                              <md-input-container class="md-block" flex-gt-sm>
+                                  <label>Bill number</label>
+                                  <input required type="text" name="bill_number" ng-model="ctrl.dialog_data.bill_number">
+                                  <div ng-messages = "bill_creation_dialog_form.bill_number.$error">
+                                      <div ng-message = "required">This is required</div>
+                                  </div>
+                              </md-input-container>
+                              <md-input-container>
+                                  <div flex-gt-xs>
+                                      <md-datepicker ng-model="ctrl.dialog_data.bill_date" md-placeholder="Bill Date" required>
+                                      </md-datepicker>
+                                  </div>
+                              </md-input-container>
+                          </div>
+                    </form>
+                </div>
+            </md-content>
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <md-button ng-click="save()" >
+             Save
+            </md-button>
+            <md-button ng-click="cancel()">
+              Cancel
+            </md-button>
+        </div>
+    </form>
+</md-dialog>

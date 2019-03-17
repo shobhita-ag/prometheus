@@ -19,6 +19,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.1/angular-material.min.js"></script>
 
         <script type="text/javascript" src = "{% static "js/utility.js" %}"></script>
+        <script type="text/ng-template" id="dialogs/shoot_dialog.html"></script>
 
         <style type="text/css">
             hr {
@@ -106,22 +107,6 @@
                     }
                 };
 
-                self.moveToNextStage = function(event, order_id, has_next_status_form) {
-
-                    $mdDialog.show({
-                      controller: DialogController,
-                      templateUrl: 'render_dialog',
-                      parent: angular.element(document.body),
-                      targetEvent: event,
-                      clickOutsideToClose:false
-                    })
-                    .then(function(answer) {
-                      $scope.status = 'You said the information was "' + answer + '".';
-                    }, function() {
-                      $scope.status = 'You cancelled the dialog.';
-                    });
-                };
-
                 self.loadOrderData = function() {
 
                 	self.loadSpinner = true;
@@ -146,17 +131,71 @@
                 };
 
                 self.loadOrderData();
+
+                self.moveToNextStage = function(event, order_id, next_status, has_next_status_form) {
+                    //get dialog data only for shooting, cutting and printing status since only they have data to be pre-populated
+                    self.next_status = next_status;
+                    if ([2,3,6,7,16,17].includes(next_status)) {
+                        $http({
+                            url: '/get_dialog_data?next_status=' + String(next_status) + '&order_id=' + order_id,
+                            method: "GET"
+                        })
+                        .then(function(response){
+                            self.dialog_data = response.data['dialog_data'];
+                            self.openDialog(event, order_id, next_status);
+                        }, function(error_response) {
+                            var response_data = error_response.data;
+                            commonUtility.displayErrorMsg(response_data["message"]);
+                        });
+                    } else {
+                        self.openDialog(event, order_id, next_status);
+                    }
+                };
+
+                self.openDialog = function(event, order_id, next_status) {
+                    $mdDialog.show({
+                        controller: DialogController,
+                        templateUrl: 'render_dialog?next_status=' + String(next_status) + '&order_id=' + order_id,
+                        parent: angular.element(document.body),
+                        targetEvent: event,
+                        clickOutsideToClose:true,
+                        controllerAs: 'ctrl',
+                        locals: {data: {'next_status': next_status, 'dialog_data': self.dialog_data}}
+                    })
+                    .then(function(answer) {
+                        $scope.status = 'You said the information was "' + answer + '".';
+                    }, function() {
+                        $scope.status = 'You cancelled the dialog.';
+                    });
+                }
+
+                // self.hide = function() {
+                //     $mdDialog.hide();
+                // };
+                // self.cancel = function() {
+                //     $mdDialog.cancel();
+                // };
+                // self.save = function(answer) {
+                //     console.log(self.next_status);
+                //     console.log(data.next_status);
+                //     $mdDialog.hide(answer);
+                // };
             });
-            function DialogController($scope, $mdDialog) {
-              $scope.hide = function() {
-                $mdDialog.hide();
-              };
-              $scope.cancel = function() {
-                $mdDialog.cancel();
-              };
-              $scope.answer = function(answer) {
-                $mdDialog.hide(answer);
-              };
+
+            // // Code begins for dialogs
+            function DialogController($scope, $mdDialog, data) {
+                $scope.data = data;
+                $scope.hide = function() {
+                    $mdDialog.hide();
+                };
+                $scope.cancel = function() {
+                    $mdDialog.cancel();
+                };
+                $scope.save = function(answer) {
+                    console.log(data.next_status);
+                    console.log(data);
+                    $mdDialog.hide(answer);
+                };
             }
         </script>
     </head>
@@ -195,7 +234,7 @@
                                     <td>[[order.work_type]]</td>
                                     <td>[[order.status]]</td>
                                     <td>
-                                        <md-button class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, has_next_status_form)">[[order.next_status]]</md-button>
+                                        <md-button class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, order.next_status.value, has_next_status_form)">[[order.next_status.name]]</md-button>
                                         <md-button class="defaultcase md-primary" layout="column" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)">Update</md-button>
                                     </td>
                                 </tr>

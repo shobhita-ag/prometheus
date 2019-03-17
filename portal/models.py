@@ -171,7 +171,8 @@ class Order(TimeStampedModel):
 		pass
 
 	def get_next_state(self):
-		return "Send to Shooting"
+		from portal.helper import get_next_status
+		return get_next_status(self)
 												
 	def __unicode__(self):
 		return self.client_name + " - " + self.client_challan_number
@@ -189,6 +190,7 @@ class Shoot(TimeStampedModel):
 	studio_name = models.CharField(max_length=128, null=True, blank=True)
 	model_name = models.CharField(max_length=128)
 	shoot_date = models.DateField(null=True)
+	shoot_user = models.CharField(max_length=128)
 	start_date = models.DateField(null=True)
 	end_date = models.DateField(null=True)
 
@@ -199,7 +201,6 @@ class Shoot(TimeStampedModel):
 class PoseSelection(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	pose_selection_user = models.CharField(max_length=128)
-	pose_selection_date = models.DateField(null=True)
 	start_date = models.DateField(null=True)
 	end_date = models.DateField(null=True)
 
@@ -210,7 +211,6 @@ class PoseSelection(TimeStampedModel):
 class PoseCutting(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	pose_cutting_user = models.CharField(max_length=128)
-	pose_cutting_date = models.DateField(null=True)
 	number_of_poses = models.IntegerField()
 	start_date = models.DateField(null=True)
 	end_date = models.DateField(null=True)
@@ -270,8 +270,8 @@ class ChangesImplementation(TimeStampedModel):
 
 class Printing(TimeStampedModel):
 	order = models.ForeignKey(Order)
-	printing_date = models.DateField(null=True)
 	folder_number = models.CharField(max_length=128)
+	printing_user = models.CharField(max_length=128)
 	start_date = models.DateField(null=True)
 	end_date = models.DateField(null=True)
 
