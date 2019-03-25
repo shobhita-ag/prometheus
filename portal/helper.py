@@ -1,4 +1,4 @@
-
+import datetime
 
 order_next_status_map = {
 	1: ("Send for Shooting", 2),
@@ -33,7 +33,7 @@ order_next_status_template_map = {
 	10: 'color_correction_dialog.html',
 	11: 'color_correction_dialog.html',
 	12: 'dummy_sent_dialog.html',
-	13: 'chnages_taken_dialog.html',
+	13: 'changes_taken_dialog.html',
 	14: 'changes_implementation_dialog.html',
 	15: 'changes_implementation_dialog.html',
 	16: 'printing_dialog.html',
@@ -89,3 +89,12 @@ def get_next_status(order):
 	if next_status_tuple:
 		return {"name": next_status_tuple[0], "value": next_status_tuple[1]}
 	return None
+
+def convert_utc_into_ist(timestamp):
+	if type(timestamp) == unicode:
+		timestamp = datetime.datetime.strptime(str(timestamp), '%Y-%m-%dT%H:%M:%S.%fZ') + datetime.timedelta(minutes=330)
+	elif type(timestamp) == str:
+		timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%fZ') + datetime.timedelta(minutes=330)
+	elif type(timestamp) == datetime.datetime:
+		timestamp = timestamp + datetime.timedelta(minutes=330)
+	return timestamp

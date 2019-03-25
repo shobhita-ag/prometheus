@@ -100,47 +100,80 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class ShootSerializer(serializers.ModelSerializer):
 
-	shooting_location = serializers.SerializerMethodField()
-	studio_name = serializers.SerializerMethodField()
-	model_name = serializers.SerializerMethodField()
 	shoot_date = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Shoot
 		fields = ('id', 'shooting_location', 'model_name', 'shoot_date', 'studio_name')
-	
-	def get_shooting_location(self, obj):
-		return obj.shooting_location
-
-	def get_studio_name(self, obj):
-		return obj.studio_name
-
-	def get_model_name(self, obj):
-		return obj.model_name
 
 	def get_shoot_date(self, obj):
 		return datetime.datetime.strftime(obj.shoot_date, '%Y/%m/%d')
 
 
+class PoseSelectionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = PoseSelection
+		fields = ('id',)
+
+
 class PoseCuttingSerializer(serializers.ModelSerializer):
-	
-	number_of_poses = serializers.SerializerMethodField()
 
 	class Meta:
 		model = PoseCutting
 		fields = ('id', 'number_of_poses')
 
-	def get_number_of_poses(self, obj):
-		return obj.number_of_poses
+
+class LayoutSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Layout
+		fields = ('id',)
+
+
+class ColorCorrectionSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = ColorCorrection
+		fields = ('id', )
+
+
+class DummySentSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = DummySent
+		fields = ('id', )
+
+
+class ChangesTakenSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = ChangesTaken
+		fields = ('id', )
+
+
+class ChangesImplementationSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = ChangesImplementation
+		fields = ('id', )
+
+
+class BillCreationSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = BillCreation
+		fields = ('id', )
+
+
+class DeliverySerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Delivery
+		fields = ('id', )
 
 
 class PrintingSerializer(serializers.ModelSerializer):
 
-	folder_number = serializers.SerializerMethodField()
-
 	class Meta:
 		model = Printing
 		fields = ('id', 'folder_number')
-
-	def get_folder_number(self, obj):
-		return obj.folder_number				
