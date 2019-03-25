@@ -124,7 +124,7 @@
                         self.order_data = response_data["order_data"];
                     }, function(error_response) {
                         var response_data = error_response.data;
-                        commonUtility.displayErrorMsg(response_data["message"]);
+                        commonUtility.displayErrorMsg(response_data["response"]);
                         self.show_err = true;
                         self.loadSpinner = false;
                     });
@@ -135,7 +135,7 @@
                 self.moveToNextStage = function(event, order_id, next_status, has_next_status_form) {
                     //get dialog data only for shooting, cutting and printing status since only they have data to be pre-populated
                     self.next_status = next_status;
-                    if ([2,3,6,7,16,17].includes(next_status)) {
+                    // if ([2,3,6,7,16,17].includes(next_status)) {
                         $http({
                             url: '/get_dialog_data?next_status=' + String(next_status) + '&order_id=' + order_id,
                             method: "GET"
@@ -148,11 +148,11 @@
                             self.openDialog(event, order_id, next_status);
                         }, function(error_response) {
                             var response_data = error_response.data;
-                            commonUtility.displayErrorMsg(response_data["message"]);
+                            commonUtility.displayErrorMsg(response_data["response"]);
                         });
-                    } else {
-                        self.openDialog(event, order_id, next_status);
-                    }
+                    // } else {
+                    //     self.openDialog(event, order_id, next_status);
+                    // }
                 };
 
                 self.openDialog = function(event, order_id, next_status) {
@@ -163,7 +163,7 @@
                         targetEvent: event,
                         clickOutsideToClose:true,
                         controllerAs: 'ctrl',
-                        locals: {data: {'user' : self.user, 'next_status': next_status, 
+                        locals: {data: {'next_status': next_status,
                                         'order_id': order_id, 'dialog_data': self.dialog_data}}
                     })
                     .then(function(answer) {
@@ -174,8 +174,8 @@
                 }
             });
 
-            // Code begins for dialogs
-            function DialogController($scope, $mdDialog, data) {
+            // Code begins for dialogs (TODO: test this)
+            function DialogController($scope, $mdDialog, $http, data, commonUtility) {
                 $scope.data = data;
                 $scope.hide = function() {
                     $mdDialog.hide();
@@ -190,19 +190,17 @@
                     $http({
                         url: '/render_dialog',
                         method: "POST",
-                        data: {'user' : self.user, 'next_status': data.next_status, 
+                        data: {'next_status': data.next_status,
                                 'order_id' : data.order_id, 'dialog_data' : data.dialog_data,
                                 'date' : currentTime}
                     })
                     .then(function(response){
-                        self.dialog_data = response.data['dialog_data'];
-                        if (self.dialog_data && self.dialog_data.shoot_date) {
-                            self.dialog_data.shoot_date = new Date(self.dialog_data.shoot_date)
-                        }
-                        self.openDialog(event, order_id, next_status);
+                        var response_data = response.data;
+                        commonUtility.displayErrorMsg(response_data["response"]);
+                        window.location.href = "/";
                     }, function(error_response) {
                         var response_data = error_response.data;
-                        commonUtility.displayErrorMsg(response_data["message"]);
+                        commonUtility.displayErrorMsg(response_data["response"]);
                     });
                     $mdDialog.hide(answer);
                 };
@@ -244,7 +242,7 @@
                                     <td>[[order.work_type]]</td>
                                     <td>[[order.status]]</td>
                                     <td>
-                                        <md-button class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, order.next_status.value, has_next_status_form)">[[order.next_status.name]]</md-button>
+                                        <md-button ng-hide="order.next_status === null" class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, order.next_status.value, has_next_status_form)">[[order.next_status.name]]</md-button>
                                         <md-button class="defaultcase md-primary" layout="column" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)">Update</md-button>
                                     </td>
                                 </tr>

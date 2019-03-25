@@ -1,7 +1,7 @@
 import datetime
 
 from django.shortcuts import render
-from django.db import models
+from django.db import models, transaction
 from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from django.shortcuts import render, redirect
@@ -21,6 +21,7 @@ from portal.models import GarmentType, ShootType, ShootSubType, WorkType, WorkSu
 						PageQuality, BindingType, Order, PoseCutting, PoseSelection, ChangesTaken, ChangesImplementation, \
 						Layout, Shoot, ColorCorrection, Printing, BillCreation, Delivery, DummySent
 from portal.serializers import OrderSummarySerializer, OrderSerializer, ShootSerializer
+from portal.helper import convert_utc_into_ist
 
 class HomePage(TemplateView):
 	def get(self, request):
@@ -100,30 +101,79 @@ class RenderDialog(APIView):
 		from portal.helper import order_next_status_template_map
 		return render(request, template_name='dialogs/' + order_next_status_template_map[int(next_status)])
 
+	@transaction.atomic
 	def post(self, request):
 		if not request.user.is_authenticated():
 			return redirect('login')
-		
-		user = request.data.get('user', None)
-		dialog_data = request.data.get('dialog_data', None)
-		order_id = request.data.get('order_id', None)
-		date = order.data.get('date', None)
-		next_status = order_data.get('next_status', None)
-		next_status = int(next_status)
 
 		from portal.helper import order_next_status_model_map
 		import portal.models
+		
+		user = request.user
+		dialog_data = request.data.get('dialog_data', None)
+		order_id = request.data.get('order_id', None)
+		date = convert_utc_into_ist(request.data.get('date', None))
+		next_status = request.data.get('next_status', None)
+		next_status = int(next_status)
 
-		# try:
-		# 	Order.objects.filter(id=order_id).update(status=next_status)
-		# 	if next_status == 2:
-		# 		Shoot.objects.create(shooting_location = dialog_data.shooting_location, studio_name = dialog_data.studio_name,
-		# 			model_name = dialog_data.model_name, shoot_date = dialog_data.shoot_date, shoot_user = user,
-		# 			start_date = date)
-		# 	elif next_status == 3:
-		# 		Shoot.objects.filter(id = dialog_data.id).update(end_date = date) 
-		# except Exception as e:
+		try:
+			# create next_status's table entry
+			if next_status == 2:
+				Shoot.objects.create(order_id = order_id, shooting_location = dialog_data.get('shooting_location', None),
+					studio_name = dialog_data.get('studio_name', None), model_name = dialog_data.get('model_name', None),
+					shoot_date = convert_utc_into_ist(dialog_data.get('shoot_date', None)), shoot_user = user, start_date = date)
+			elif next_status == 3:
+				Shoot.objects.filter(id = dialog_data.get('id')).update(shooting_location = dialog_data.get('shooting_location', None),
+					studio_name = dialog_data.get('studio_name', None), model_name = dialog_data.get('model_name', None),
+					shoot_date = convert_utc_into_ist(dialog_data.get('shoot_date', None)), shoot_user = user, end_date = date)
+			elif next_status == 4:
+				PoseSelection.objects.create(order_id = order_id, pose_selection_user = user, start_date = date)
+			elif next_status == 5:
+				PoseSelection.objects.filter(id = dialog_data.get('id')).update(pose_selection_user = user, end_date = date)
+			elif next_status == 6:
+				PoseCutting.objects.create(order_id = order_id, pose_cutting_user = user, 
+					number_of_poses = dialog_data.get('number_of_poses', None), start_date = date)
+			elif next_status == 7:
+				PoseCutting.objects.filter(id = dialog_data.get('id')).update(pose_cutting_user = user,
+					number_of_poses = dialog_data.get('number_of_poses', None), end_date = date)
+			elif next_status == 8:
+				Layout.objects.create(order_id = order_id, layout_user = user, start_date = date)
+			elif next_status == 9:
+				Layout.objects.filter(id = dialog_data.get('id')).update(layout_user = user, end_date = date)
+			elif next_status == 10:
+				ColorCorrection.objects.create(order_id = order_id, color_correction_user = user, start_date = date)
+			elif next_status == 11:
+				ColorCorrection.objects.filter(id = dialog_data.get('id')).update(color_correction_user = user, end_date = date)
+			elif next_status == 12:
+				DummySent.objects.create(order_id = order_id, dummy_sent_user = user, dummy_sent_date = date)
+			elif next_status == 13:
+				ChangesTaken.objects.create(order_id = order_id, changes_taken_user = user, changes_taken_date = date,
+					remarks = dialog_data.get('remarks', None))
+			elif next_status == 14:
+				ChangesImplementation.objects.create(order_id = order_id, changes_implementation_user = user, start_date = date)
+			elif next_status == 15:
+				ChangesImplementation.objects.filter(id = dialog_data.get('id')).update(changes_implementation_user = user, end_date = date)
+			elif next_status == 16:
+				Printing.objects.create(order_id = order_id, folder_number = dialog_data.get('folder_number', None),
+					printing_user = user, start_date = date)
+			elif next_status == 17:
+				Printing.objects.filter(id = dialog_data.get('id')).update(folder_number = dialog_data.get('folder_number', None),
+					printing_user = user, end_date = date)
+			elif next_status == 18:
+				BillCreation.objects.create(order_id = order_id, bill_creation_user = user,
+					bill_number = dialog_data.get('bill_number', None), bill_date = convert_utc_into_ist(dialog_data.get('bill_date', None)))
+			elif next_status == 19:
+				Delivery.objects.create(order_id = order_id, delivery_user = user, delivery_date = date)
+			else:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
 
+			#update order status
+			Order.objects.filter(id=order_id).update(status=next_status)
+		except Exception as e:
+				print("Order status update failed:" + str(e))
+				return Response({"response": "Error in order updation"}, status=status.HTTP_400_BAD_REQUEST)
+
+		return Response({"response": "Order status updated"}, status=status.HTTP_200_OK)
 
 
 class CreateEditOrder(APIView):
@@ -144,7 +194,7 @@ class CreateEditOrder(APIView):
 		incoming_date = order_data.get('incoming_date', None)
 
 		if incoming_date:
-			incoming_date = datetime.datetime.strptime(str(incoming_date), '%Y-%m-%dT%H:%M:%S.%fZ')
+			incoming_date = convert_utc_into_ist(incoming_date)
 
 		client_challan_number = order_data.get('client_challan_number', None)
 		garment_type = order_data.get('garment_type', None)
@@ -169,17 +219,20 @@ class CreateEditOrder(APIView):
 				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
 				has_photo_lamination = has_photo_lamination)
+				return Response({"response": "Order created"}, status=status.HTTP_201_CREATED)
+
 			else:
 				Order.objects.filter(id=order_id).update(client_name = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
 				garment_type_id = garment_type, garment_count = garment_count, shoot_type_id = shoot_type, shoot_sub_type_id = shoot_sub_type,
 				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
 				has_photo_lamination = has_photo_lamination)
+				return Response({"response": "Order updated"}, status=status.HTTP_200_OK)
 		except Exception as e:
 			print("Order creation failed:" + str(e))
 			return Response({"response": "Error in order creation"}, status=status.HTTP_400_BAD_REQUEST)
 
-		return Response({"response": "Order created"}, status=status.HTTP_201_CREATED) 
+
 
 
 
@@ -187,7 +240,7 @@ class GetOrder(APIView):
 
 	def get(self, request):
 		if not request.user.is_authenticated():
-			return redirect('login')		
+			return redirect('login')
 		order_id = request.GET.get('order_id', None)
 		print(order_id)
 		if order_id:
@@ -201,24 +254,33 @@ class GetOrder(APIView):
 
 class DashboardOrders(APIView):
 
+	#TODO: test this
 	def get(self, request):
 		if not request.user.is_authenticated():
-			return redirect('login')		
+			return redirect('login')
 		order_status = request.GET.get('status', None)
-		order_date = request.GET.get('order_date', None)
+		incoming_date = request.GET.get('incoming_date', None)
 
 		page_size = request.GET.get('page_size', 10)
 		page_index = request.GET.get('page_index', 1)
 
-		orders = Order.objects.select_related('garment_type', 'work_type').all().order_by('-incoming_date')
-		pages = Paginator(orders, page_size)
 
+		orders = Order.objects.select_related('garment_type', 'work_type').all()
+
+		if order_status:
+			orders = orders.filter(status = order_status)
+
+		if incoming_date:
+			orders = orders.filter(incoming_date = incoming_date)
+
+		orders = orders.order_by('-incoming_date')
+
+		pages = Paginator(orders, page_size)
 		page_count = pages.num_pages
 		orders = pages.page(page_index).object_list
 
 		order_data = OrderSummarySerializer(orders, many=True).data
-
-		return Response({"order_data": order_data},status=status.HTTP_200_OK)
+		return Response({"order_data": order_data, "page_count" : page_count}, status=status.HTTP_200_OK)
 
 
 class GetDropDownData(APIView):
