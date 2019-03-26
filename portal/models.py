@@ -253,7 +253,7 @@ class ChangesTaken(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	changes_taken_user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	changes_taken_date = models.DateField(null=True)
-	remarks = models.CharField(max_length=128)
+	remarks = models.CharField(max_length=128, null=True)
 
 	def __unicode__(self):
 		return self.order

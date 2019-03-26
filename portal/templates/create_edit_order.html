@@ -110,7 +110,7 @@
                         }
                     }
                     $scope.work_sub_types = work_sub_types;
-                    self.order_data.size = null;
+                    //self.order_data.size = null;
                 };
 
                 self.shootTypeChange = function() {
@@ -124,7 +124,7 @@
                         }
                     }
                     $scope.shoot_sub_types = shoot_sub_types;
-                    self.order_data.shoot_sub_type = null;
+                    //self.order_data.shoot_sub_type = null;
                 };
 
                 self.getOrder = function() {
@@ -244,16 +244,22 @@
                       						</div>
     	                                </md-input-container>
                                         <md-input-container class="md-block" flex-gt-sm>
-                                        <label>Challan Number</label>
-                                        <input type="text" name="client_challan_number" required ng-model="ctrl.order_data.client_challan_number">
-                                        <div ng-messages = "create_edit_order_form.client_challan_number.$error">
-                                            <div ng-message = "required">This is required</div>
-                                        </div>
+                                            <label>Challan Number</label>
+                                            <input type="text" name="client_challan_number" required ng-model="ctrl.order_data.client_challan_number">
+                                            <div ng-messages = "create_edit_order_form.client_challan_number.$error">
+                                                <div ng-message = "required">This is required</div>
+                                            </div>
                                         </md-input-container>
                                         <!-- <md-input-container> -->
+                                            <!-- <md-content> TODO: fix the error message CSS -->
                                             <div flex-gt-xs>
-                                              <md-datepicker ng-model="ctrl.order_data.incoming_date" md-placeholder="Incoming date" ng-required></md-datepicker>
+                                                <md-datepicker name="incoming_date" ng-model="ctrl.order_data.incoming_date" md-placeholder="Incoming date" required>
+                                                </md-datepicker>
+                                                <div ng-messages = "create_edit_order_form.incoming_date.$error">
+                                                    <div ng-message = "required">This is required</div>
+                                                </div>
                                             </div>
+                                            <!-- </md-content> -->
                                         <!-- </md-input-container> -->
                                     </div>
                                     <div layout="row">
@@ -424,7 +430,7 @@
     							            </div>
     							        </md-input-container>
                                     </div>
-	                                <md-button class="md-raised md-warn pull-right" style="width:30%;" type="submit">Save</md-button>
+	                                <md-button ng-disabled="create_edit_order_form.$invalid" class="md-raised md-warn pull-right" style="width:30%;" type="submit">Save</md-button>
 	                            </form>
 	                        </div>
 	                    </md-content>

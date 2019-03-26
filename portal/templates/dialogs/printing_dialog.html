@@ -1,35 +1,29 @@
 <md-dialog aria-label="Printing">
-    <form>
-        <md-toolbar>
-          <div class="md-toolbar-tools">
-            <h2>Printing</h2>
-          </div>
-        </md-toolbar>
-        <md-dialog-content>
-            <md-content class="md-padding">
-                <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
-                    <form name="printing_dialog_form" method="post">
-                        {% csrf_token %}
-                          <div layout="row">
-                              <md-input-container class="md-block" flex-gt-sm>
-                                  <label>Folder number</label>
-                                  <input required type="text" name="folder_number" ng-model="data.dialog_data.folder_number">
-                                  <div ng-messages = "printing_dialog_form.folder_number.$error">
-                                      <div ng-message = "required">This is required</div>
-                                  </div>
-                              </md-input-container>
-                          </div>
-                    </form>
-                </div>
-            </md-content>
-        </md-dialog-content>
-        <div class="md-actions" layout="row">
-            <md-button ng-click="save()" >
-             Save
-            </md-button>
-            <md-button ng-click="cancel()">
-              Cancel
-            </md-button>
-        </div>
-    </form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Printing</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <md-content class="md-padding">
+            <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
+                <form name="printing_dialog_form" method="post">
+                    {% csrf_token %}
+                      <div layout="row">
+                          <md-input-container class="md-block" flex-gt-sm>
+                              <label>Folder number</label>
+                              <input required type="text" name="folder_number" ng-model="data.dialog_data.folder_number">
+                              <div ng-messages = "printing_dialog_form.folder_number.$error">
+                                  <div ng-message = "required">This is required</div>
+                              </div>
+                          </md-input-container>
+                      </div>
+                      <md-button class="md-raised md-warn pull-right" style="width:30%;" type="reset" ng-click="cancel()">
+                        Cancel
+                      </md-button> 
+                      <md-button ng-disabled="printing_dialog_form.$invalid" class="md-raised md-warn pull-right" style="width:30%;" type="submit" ng-click="save()">Save</md-button>                          
+                </form>
+            </div>
+        </md-content>
+    </md-dialog-content>
 </md-dialog>

@@ -1,35 +1,26 @@
 <md-dialog aria-label="Changes taken">
-    <form>
-        <md-toolbar>
-          <div class="md-toolbar-tools">
-            <h2>Changes taken</h2>
-          </div>
-        </md-toolbar>
-        <md-dialog-content>
-            <md-content class="md-padding">
-                <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
-                    <form name="changes_taken_dialog_form" method="post">
-                        {% csrf_token %}
-                          <div layout="row">
-                              <md-input-container class="md-block" flex-gt-sm>
-                                  <label>Remarks</label>
-                                  <input required type="text" name="remarks" ng-model="data.dialog_data.remarks">
-                                  <div ng-messages = "changes_taken_dialog_form.remarks.$error">
-                                      <div ng-message = "required">This is required</div>
-                                  </div>
-                              </md-input-container>
-                          </div>
-                    </form>
-                </div>
-            </md-content>
-        </md-dialog-content>
-        <div class="md-actions" layout="row">
-            <md-button ng-click="save()" >
-             Save
-            </md-button>
-            <md-button ng-click="cancel()">
-              Cancel
-            </md-button>
-        </div>
-    </form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Changes taken</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <md-content class="md-padding">
+            <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
+                <form name="changes_taken_dialog_form" method="post">
+                    {% csrf_token %}
+                      <div layout="row">
+                          <md-input-container class="md-block" flex-gt-sm>
+                              <label>Remarks</label>
+                              <input type="text" name="remarks" ng-model="data.dialog_data.remarks">
+                          </md-input-container>
+                      </div>
+                      <md-button class="md-raised md-warn pull-right" style="width:30%;" type="reset" ng-click="cancel()">
+                        Cancel
+                      </md-button> 
+                      <md-button ng-disabled="changes_taken_dialog_form.$invalid" class="md-raised md-warn pull-right" style="width:30%;" type="submit" ng-click="save()">Save</md-button>                          
+                </form>
+            </div>
+        </md-content>
+    </md-dialog-content>
 </md-dialog>
