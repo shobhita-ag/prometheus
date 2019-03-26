@@ -20,7 +20,9 @@ from django.contrib.auth import authenticate, login, logout
 from portal.models import GarmentType, ShootType, ShootSubType, WorkType, WorkSubType, \
 						PageQuality, BindingType, Order, PoseCutting, PoseSelection, ChangesTaken, ChangesImplementation, \
 						Layout, Shoot, ColorCorrection, Printing, BillCreation, Delivery, DummySent
-from portal.serializers import OrderSummarySerializer, OrderSerializer, ShootSerializer
+from portal.serializers import OrderFullViewSerializer, OrderSerializer, OrderSummarySerializer, ShootSerializer, PoseSelectionSerializer, PoseCuttingSerializer, \
+								LayoutSerializer, ColorCorrectionSerializer, DummySentSerializer, ChangesImplementationSerializer, \
+								ChangesTakenSerializer, BillCreationSerializer, DeliverySerializer, PrintingSerializer
 from portal.helper import convert_utc_into_ist
 
 class HomePage(TemplateView):
@@ -95,11 +97,17 @@ class RenderDialog(APIView):
 		if not request.user.is_authenticated():
 			return redirect('login')
 
+		dialog_type = request.GET.get('type', None)
 		next_status = request.GET.get('next_status', None)
 		order_id = request.GET.get('order_id', None)
 
-		from portal.helper import order_next_status_template_map
-		return render(request, template_name='dialogs/' + order_next_status_template_map[int(next_status)])
+		if dialog_type == "status_change":
+			from portal.helper import order_next_status_template_map
+			return render(request, template_name='dialogs/' + order_next_status_template_map[int(next_status)])
+		elif dialog_type == "order_full_view":
+			return render(request, template_name='dialogs/order_full_view.html')
+		else:
+			return Response({"response": "Incorrect dialog type"}, status=status.HTTP_400_BAD_REQUEST)
 
 	@transaction.atomic
 	def post(self, request):
@@ -233,9 +241,6 @@ class CreateEditOrder(APIView):
 			return Response({"response": "Error in order creation"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
-
 class GetOrder(APIView):
 
 	def get(self, request):
@@ -249,7 +254,88 @@ class GetOrder(APIView):
 			order_data = OrderSerializer(order).data
 			return Response({"order_data": order_data}, status=status.HTTP_200_OK)
 		else:
-			return Response({}, status=status.HTTP_400_BAD_REQUEST)			
+			return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetOrderFullView(APIView):
+
+	def get(self, request):
+		#if not request.user.is_authenticated():
+		#	return redirect('login')
+		order_id = request.GET.get('order_id', None)
+		if order_id:
+			try:
+				order_id = int(order_id)
+
+				#order
+				order_data = OrderFullViewSerializer(Order.objects.get(id = order_id)).data
+
+				#statuses
+				try:
+					shoot_data = ShootSerializer(Shoot.objects.get(order_id = order_id)).data
+				except Shoot.DoesNotExist:
+					shoot_data = None
+
+				try:
+					pose_selection_data = PoseSelectionSerializer(PoseSelection.objects.get(order_id = order_id)).data
+				except PoseSelection.DoesNotExist:
+					pose_selection_data = None
+
+				try:
+					pose_cutting_data = PoseCuttingSerializer(PoseCutting.objects.get(order_id = order_id)).data
+				except PoseCutting.DoesNotExist:
+					pose_cutting_data = None
+
+				try:
+					layout_data = LayoutSerializer(Layout.objects.get(order_id = order_id)).data
+				except Layout.DoesNotExist:
+					layout_data = None
+
+				try:
+					color_correction_data = ColorCorrectionSerializer(ColorCorrection.objects.get(order_id = order_id)).data
+				except ColorCorrection.DoesNotExist:
+					color_correction_data = None
+
+				try:
+					dummy_sent_data = DummySentSerializer(DummySent.objects.get(order_id = order_id)).data
+				except DummySent.DoesNotExist:
+					dummy_sent_data = None
+
+				try:
+					changes_taken_data = ChangesTakenSerializer(ChangesTaken.objects.get(order_id = order_id)).data
+				except ChangesTaken.DoesNotExist:
+					changes_taken_data = None
+
+				try:
+					changes_implementation_data = ChangesImplementationSerializer(ChangesImplementation.objects.get(order_id = order_id)).data
+				except ChangesImplementation.DoesNotExist:
+					changes_implementation_data = None
+
+				try:
+					bill_creation_data = BillCreationSerializer(BillCreation.objects.get(order_id = order_id)).data
+				except BillCreation.DoesNotExist:
+					bill_creation_data = None
+
+				try:
+					delivery_data = DeliverySerializer(Delivery.objects.get(order_id = order_id)).data
+				except Delivery.DoesNotExist:
+					delivery_data = None
+
+				try:
+					printing_data = PrintingSerializer(Printing.objects.get(order_id = order_id)).data
+				except Printing.DoesNotExist:
+					printing_data = None
+
+				return Response({"data": {"order_data" : order_data, "shoot_data" : shoot_data, "pose_selection_data" : pose_selection_data,
+								"pose_cutting_data" : pose_cutting_data, "layout_data" : layout_data, "color_correction_data" : color_correction_data,
+								"dummy_sent_data" : dummy_sent_data, "changes_taken_data" : changes_taken_data, "changes_implementation_data" : changes_implementation_data,
+								"bill_creation_data" : bill_creation_data, "delivery_data" : delivery_data, "printing_data" : printing_data}},
+								status = status.HTTP_200_OK)
+			except Exception as e:
+				print("Error while fetching order data:" + str(e))
+				return Response({"response": "Error in fetching order data"}, status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return Response({"response" : "Order does not exist"}, status = status.HTTP_400_BAD_REQUEST)
 
 
 class DashboardOrders(APIView):

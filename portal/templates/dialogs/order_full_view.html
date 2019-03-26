@@ -1,0 +1,104 @@
+<md-dialog aria-label="OrderDetails">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Order Details</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <md-content class="md-padding">
+            <table id="dashTable">
+                <tbody>
+                    <tr><td colspan="2"><h2>Order</h2></td></tr>
+                    <tr><td>Client Name</td><td>[[data.order_full_view_data.order_data.client_name]]</td></tr>
+                    <tr><td>Incoming Date</td><td>[[data.order_full_view_data.order_data.incoming_date]]</td></tr>
+                    <tr><td>Client Challan Number</td><td>[[data.order_full_view_data.order_data.client_challan_number]]</td></tr>
+                    <tr><td>Garment Type</td><td>[[data.order_full_view_data.order_data.garment_type]]</td></tr>
+                    <tr><td>Garment Count</td><td>[[data.order_full_view_data.order_data.garment_count]]</td></tr>
+                    <tr><td>Shoot Type</td><td>[[data.order_full_view_data.order_data.shoot_type]]</td></tr>
+                    <tr><td>Shoot Sub Type</td><td>[[data.order_full_view_data.order_data.shoot_sub_type]]</td></tr>
+                    <tr><td>Blouse Stitch</td><td>[[data.order_full_view_data.order_data.has_blouse_stitch]]</td></tr>
+                    <tr><td>Work Type</td><td>[[data.order_full_view_data.order_data.work_type]]</td></tr>
+                    <tr><td>Size</td><td>[[data.order_full_view_data.order_data.size]]</td></tr>
+                    <tr><td>Page Count</td><td>[[data.order_full_view_data.order_data.page_count]]</td></tr>
+                    <tr><td>Outer Page Quality</td><td>[[data.order_full_view_data.order_data.outer_page_quality]]</td></tr>
+                    <tr><td>Inner Page Quality</td><td>[[data.order_full_view_data.order_data.inner_page_quality]]</td></tr>
+                    <tr><td>Binding Type</td><td>[[data.order_full_view_data.order_data.binding_type]]</td></tr>
+                    <tr><td>Book Name</td><td>[[data.order_full_view_data.order_data.book_name]]</td></tr>
+                    <tr><td>Book Quantity</td><td>[[data.order_full_view_data.order_data.book_quantity]]</td></tr>
+                    <tr><td>Photo Lamination</td><td>[[data.order_full_view_data.order_data.has_photo_lamination]]</td></tr>
+                    <tr><td>Status</td><td>[[data.order_full_view_data.order_data.status]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.shoot_data === null">
+                    <tr><td colspan="2"><h2>Shoot</h2></td></tr>
+                    <tr><td>Shooting Location</td><td>[[data.order_full_view_data.shoot_data.shooting_location]]</td></tr>
+                    <tr><td>Model Name</td><td>[[data.order_full_view_data.shoot_data.model_name]]</td></tr>
+                    <tr><td>Shoot Date</td><td>[[data.order_full_view_data.shoot_data.shoot_date]]</td></tr>
+                    <tr><td>Studio Name</td><td>[[data.order_full_view_data.shoot_data.studio_name]]</td></tr>
+                    <tr><td>Shoot User</td><td>[[data.order_full_view_data.shoot_data.shoot_user]]</td></tr>
+                    <tr><td>Start Date</td><td>[[data.order_full_view_data.shoot_data.start_date]]</td></tr>
+                    <tr><td>End Date</td><td>[[data.order_full_view_data.shoot_data.end_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.pose_selection_data === null">
+                    <tr><td colspan="2"><h2>Pose Selection</h2></td></tr>
+                    <tr><td>Pose Selection User</td><td>[[data.order_full_view_data.pose_selection_data.pose_selection_user]]</td></tr>
+                    <tr><td>Start Date</td><td>[[data.order_full_view_data.pose_selection_data.start_date]]</td></tr>
+                    <tr><td>End Date</td><td>[[data.order_full_view_data.pose_selection_data.end_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.pose_cutting_data === null">
+                    <tr><td colspan="2"><h2>Pose Cutting</h2></td></tr>
+                    <tr><td>Pose Cutting User</td><td>[[data.order_full_view_data.pose_cutting_data.pose_cutting_user]]</td></tr>
+                    <tr><td>Number of Poses</td><td>[[data.order_full_view_data.pose_cutting_data.number_of_poses]]</td></tr>
+                    <tr><td>Start Date</td><td>[[data.order_full_view_data.pose_cutting_data.start_date]]</td></tr>
+                    <tr><td>End Date</td><td>[[data.order_full_view_data.pose_cutting_data.end_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.layout_data === null">
+                    <tr><td colspan="2"><h2>Layout</h2></td></tr>
+                    <tr><td>Layout User</td><td>[[data.order_full_view_data.layout_data.layout_user]]</td></tr>
+                    <tr><td>Start Date</td><td>[[data.order_full_view_data.layout_data.start_date]]</td></tr>
+                    <tr><td>End Date</td><td>[[data.order_full_view_data.layout_data.end_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.color_correction_data === null">
+                    <tr><td colspan="2"><h2>Color Correction</h2></td></tr>
+                    <tr><td>Color Correction User</td><td>[[data.order_full_view_data.color_correction_data.color_correction_user]]</td></tr>
+                    <tr><td>Start Date</td><td>[[data.order_full_view_data.color_correction_data.start_date]]</td></tr>
+                    <tr><td>End Date</td><td>[[data.order_full_view_data.color_correction_data.end_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.dummy_sent_data === null">
+                    <tr><td colspan="2"><h2>Dummy Sent</h2></td></tr>
+                    <tr><td>Dummy Sending User</td><td>[[data.order_full_view_data.dummy_sent_data.dummy_sent_user]]</td></tr>
+                    <tr><td>Dummy Sent Date</td><td>[[data.order_full_view_data.dummy_sent_data.dummy_sent_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.changes_taken_data === null">
+                    <tr><td colspan="2"><h2>Changes Taken</h2></td></tr>
+                    <tr><td>Changes Taken User</td><td>[[data.order_full_view_data.changes_taken_data.changes_taken_user]]</td></tr>
+                    <tr><td>Remarks</td><td>[[data.order_full_view_data.changes_taken_data.remarks]]</td></tr>
+                    <tr><td>Changes Taken Date</td><td>[[data.order_full_view_data.changes_taken_data.changes_taken_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.changes_implementation_data === null">
+                    <tr><td colspan="2"><h2>Changes Implementation</h2></td></tr>
+                    <tr><td>Changes Implementing User</td><td>[[data.order_full_view_data.changes_implementation_data.changes_implementation_user]]</td></tr>
+                    <tr><td>Start Date</td><td>[[data.order_full_view_data.changes_implementation_data.start_date]]</td></tr>
+                    <tr><td>End Date</td><td>[[data.order_full_view_data.changes_implementation_data.end_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.printing_data === null">
+                    <tr><td colspan="2"><h2>Printing</h2></td></tr>
+                    <tr><td>Printing User</td><td>[[data.order_full_view_data.printing_data.printing_user]]</td></tr>
+                    <tr><td>Folder Number</td><td>[[data.order_full_view_data.printing_data.folder_number]]</td></tr>
+                    <tr><td>Start Date</td><td>[[data.order_full_view_data.printing_data.start_date]]</td></tr>
+                    <tr><td>End Date</td><td>[[data.order_full_view_data.printing_data.end_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.bill_creation_data === null">
+                    <tr><td colspan="2"><h2>Bill Creation</h2></td></tr>
+                    <tr><td>Bill Creation User</td><td>[[data.order_full_view_data.bill_creation_data.bill_creation_user]]</td></tr>
+                    <tr><td>Bill Number</td><td>[[data.order_full_view_data.bill_creation_data.bill_number]]</td></tr>
+                    <tr><td>Bill Date</td><td>[[data.order_full_view_data.bill_creation_data.bill_date]]</td></tr>
+                </tbody>
+                <tbody ng-hide="data.order_full_view_data.delivery_data === null">
+                    <tr><td colspan="2"><h2>Delivery</h2></td></tr>
+                    <tr><td>Delivery User</td><td>[[data.order_full_view_data.delivery_data.delivery_user]]</td></tr>
+                    <tr><td>Delivery Date</td><td>[[data.order_full_view_data.delivery_data.delivery_date]]</td></tr>
+                </tbody>                                                                                                             
+            </table>
+        </md-content>
+    </md-dialog-content>
+</md-dialog>

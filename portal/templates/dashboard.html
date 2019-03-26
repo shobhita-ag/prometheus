@@ -17,6 +17,7 @@
         <script type="text/javascript" src = "{% static "js/v-accordion.js" %}"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.1/angular-material.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-messages.js""></script>
 
         <script type="text/javascript" src = "{% static "js/utility.js" %}"></script>
         <script type="text/ng-template" id="dialogs/shoot_dialog.html"></script>
@@ -74,7 +75,7 @@
         </style>
 
         <script type="text/javascript">
-            var app = angular.module('Dashboard',['ngMaterial', 'vAccordion', 'ngAnimate', 'shared']).value('ops_user', '{{ops_user}}');
+            var app = angular.module('Dashboard',['ngMaterial', 'ngMessages', 'vAccordion', 'ngAnimate', 'shared']).value('ops_user', '{{ops_user}}');
             app.config(['$httpProvider', function($httpProvider) {
                 $httpProvider.defaults.xsrfCookieName = 'csrftoken';
                 $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -105,6 +106,44 @@
                     } else {
                         $window.location.href = "/create_edit_order";
                     }
+                };
+
+                self.openOrderFullViewDialog = function(event, order_id) {
+                    $mdDialog.show({
+                        controller: DialogController,
+                        templateUrl: 'render_dialog?type=order_full_view',
+                        parent: angular.element(document.body),
+                        targetEvent: event,
+                        clickOutsideToClose:true,
+                        controllerAs: 'ctrl',
+                        locals: {data: {'order_id': order_id, 'order_full_view_data': self.order_full_view_data}}
+                    })
+                    .then(function(answer) {
+                        $scope.status = 'You said the information was "' + answer + '".';
+                    }, function() {
+                        $scope.status = 'You cancelled the dialog.';
+                    });
+                };
+
+                self.getOrderFullView = function(event, order_id) {
+                    self.loadSpinner = true;
+
+                    $http({
+                        url: "/get_order_full_view?order_id=" + order_id,
+                        method: "GET"
+                    })
+                    .then(function(response){
+                        self.show_err = false;
+                        self.loadSpinner = false;
+                        var response_data = response.data;
+                        self.order_full_view_data = response_data["data"];
+                        self.openOrderFullViewDialog(event, order_id);
+                    }, function(error_response) {
+                        var response_data = error_response.data;
+                        commonUtility.displayErrorMsg(response_data["response"]);
+                        self.show_err = true;
+                        self.loadSpinner = false;
+                    });
                 };
 
                 self.loadOrderData = function() {
@@ -145,20 +184,20 @@
                             if (self.dialog_data && self.dialog_data.shoot_date) {
                                 self.dialog_data.shoot_date = new Date(self.dialog_data.shoot_date)
                             }
-                            self.openDialog(event, order_id, next_status);
+                            self.openStatusDialog(event, order_id, next_status);
                         }, function(error_response) {
                             var response_data = error_response.data;
                             commonUtility.displayErrorMsg(response_data["response"]);
                         });
                     // } else {
-                    //     self.openDialog(event, order_id, next_status);
+                    //     self.openStatusDialog(event, order_id, next_status);
                     // }
                 };
 
-                self.openDialog = function(event, order_id, next_status) {
+                self.openStatusDialog = function(event, order_id, next_status) {
                     $mdDialog.show({
                         controller: DialogController,
-                        templateUrl: 'render_dialog?next_status=' + String(next_status) + '&order_id=' + order_id,
+                        templateUrl: 'render_dialog?type=status_change&next_status=' + String(next_status) + '&order_id=' + order_id,
                         parent: angular.element(document.body),
                         targetEvent: event,
                         clickOutsideToClose:true,
@@ -174,7 +213,6 @@
                 }
             });
 
-            // Code begins for dialogs (TODO: test this)
             function DialogController($scope, $mdDialog, $http, data, commonUtility) {
                 $scope.data = data;
                 $scope.hide = function() {
@@ -184,8 +222,6 @@
                     $mdDialog.cancel();
                 };
                 $scope.save = function(answer) {
-                    console.log(data.next_status);
-                    console.log(data);
                     var currentTime = new Date();
                     $http({
                         url: '/render_dialog',
@@ -242,8 +278,9 @@
                                     <td>[[order.work_type]]</td>
                                     <td>[[order.status]]</td>
                                     <td>
-                                        <md-button ng-hide="order.next_status === null" class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, order.next_status.value, has_next_status_form)">[[order.next_status.name]]</md-button>
-                                        <md-button class="defaultcase md-primary" layout="column" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)">Update</md-button>
+                                        <md-button class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.getOrderFullView($event, order.id)">View</md-button>
+                                        <md-button class="defaultcase md-primary" layout="column" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)">Edit</md-button>
+                                        <md-button ng-hide="order.next_status === null" class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, order.next_status.value, has_next_status_form)">[[order.next_status.name]]</md-button>           
                                     </td>
                                 </tr>
                             </tbody>
