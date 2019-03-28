@@ -344,29 +344,34 @@ class DashboardOrders(APIView):
 	def get(self, request):
 		if not request.user.is_authenticated():
 			return redirect('login')
-		order_status = request.GET.get('status', None)
-		incoming_date = request.GET.get('incoming_date', None)
+		try:
+			order_status = request.GET.get('status', None)
+			incoming_date = request.GET.get('incoming_date', None)
 
-		page_size = request.GET.get('page_size', 10)
-		page_index = request.GET.get('page_index', 1)
+			page_size = request.GET.get('page_size', 10)
+			page_index = request.GET.get('page_index', 1)
 
 
-		orders = Order.objects.select_related('garment_type', 'work_type').all()
+			orders = Order.objects.select_related('garment_type', 'work_type').all()
 
-		if order_status:
-			orders = orders.filter(status = order_status)
+			if order_status:
+				orders = orders.filter(status = order_status)
 
-		if incoming_date:
-			orders = orders.filter(incoming_date = incoming_date)
+			if incoming_date:
+				orders = orders.filter(incoming_date = incoming_date)
 
-		orders = orders.order_by('-incoming_date')
+			orders = orders.order_by('-incoming_date')
 
-		pages = Paginator(orders, page_size)
-		page_count = pages.num_pages
-		orders = pages.page(page_index).object_list
+			pages = Paginator(orders, page_size)
+			page_count = pages.num_pages
+			orders = pages.page(page_index).object_list
+			total_orders = pages.count
 
-		order_data = OrderSummarySerializer(orders, many=True).data
-		return Response({"order_data": order_data, "page_count" : page_count}, status=status.HTTP_200_OK)
+			order_data = OrderSummarySerializer(orders, many=True).data
+			return Response({"order_data": order_data, "page_count" : page_count, "total_orders" : total_orders}, status=status.HTTP_200_OK)
+		except Exception as e:
+			print("Error while fetching orders:" + str(e))
+			return Response({"response" : "Error while fetching orders"}, status = status.HTTP_400_BAD_REQUEST)
 
 
 class GetDropDownData(APIView):

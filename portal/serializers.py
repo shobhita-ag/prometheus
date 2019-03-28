@@ -120,7 +120,7 @@ class OrderFullViewSerializer(serializers.ModelSerializer):
 			'binding_type', 'book_name', 'book_quantity', 'has_photo_lamination', 'status')
 
 	def get_incoming_date(self, obj):
-		return datetime.datetime.strftime(obj.incoming_date, '%Y/%m/%d')
+		return datetime.datetime.strftime(obj.incoming_date, '%I %b, %Y')
 
 	def get_garment_type(self, obj):
 		return obj.garment_type.type_name
@@ -178,19 +178,19 @@ class ShootSerializer(serializers.ModelSerializer):
 
 	def get_shoot_date(self, obj):
 		if obj.shoot_date:
-			return datetime.datetime.strftime(obj.shoot_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.shoot_date, '%I %b, %Y')
 		else:
 			return None
 
 	def get_start_date(self, obj):
 		if obj.start_date:
-			return datetime.datetime.strftime(obj.start_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.start_date, '%I %b, %Y')
 		else:
 			return None
 
 	def get_end_date(self, obj):
 		if obj.end_date:
-			return datetime.datetime.strftime(obj.end_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.end_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -209,13 +209,13 @@ class PoseSelectionSerializer(serializers.ModelSerializer):
 
 	def get_start_date(self, obj):
 		if obj.start_date:
-			return datetime.datetime.strftime(obj.start_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.start_date, '%I %b, %Y')
 		else:
 			return None
 
 	def get_end_date(self, obj):
 		if obj.end_date:
-			return datetime.datetime.strftime(obj.end_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.end_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -234,13 +234,13 @@ class PoseCuttingSerializer(serializers.ModelSerializer):
 
 	def get_start_date(self, obj):
 		if obj.start_date:
-			return datetime.datetime.strftime(obj.start_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.start_date, '%I %b, %Y')
 		else:
 			return None
 
 	def get_end_date(self, obj):
 		if obj.end_date:
-			return datetime.datetime.strftime(obj.end_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.end_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -259,13 +259,13 @@ class LayoutSerializer(serializers.ModelSerializer):
 
 	def get_start_date(self, obj):
 		if obj.start_date:
-			return datetime.datetime.strftime(obj.start_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.start_date, '%I %b, %Y')
 		else:
 			return None
 
 	def get_end_date(self, obj):
 		if obj.end_date:
-			return datetime.datetime.strftime(obj.end_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.end_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -284,13 +284,13 @@ class ColorCorrectionSerializer(serializers.ModelSerializer):
 
 	def get_start_date(self, obj):
 		if obj.start_date:
-			return datetime.datetime.strftime(obj.start_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.start_date, '%I %b, %Y')
 		else:
 			return None
 
 	def get_end_date(self, obj):
 		if obj.end_date:
-			return datetime.datetime.strftime(obj.end_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.end_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -308,7 +308,7 @@ class DummySentSerializer(serializers.ModelSerializer):
 
 	def get_dummy_sent_date(self, obj):
 		if obj.dummy_sent_date:
-			return datetime.datetime.strftime(obj.dummy_sent_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.dummy_sent_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -326,7 +326,7 @@ class ChangesTakenSerializer(serializers.ModelSerializer):
 
 	def get_changes_taken_date(self, obj):
 		if obj.changes_taken_date:
-			return datetime.datetime.strftime(obj.changes_taken_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.changes_taken_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -345,13 +345,13 @@ class ChangesImplementationSerializer(serializers.ModelSerializer):
 
 	def get_start_date(self, obj):
 		if obj.start_date:
-			return datetime.datetime.strftime(obj.start_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.start_date, '%I %b, %Y')
 		else:
 			return None
 
 	def get_end_date(self, obj):
 		if obj.end_date:
-			return datetime.datetime.strftime(obj.end_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.end_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -369,7 +369,7 @@ class BillCreationSerializer(serializers.ModelSerializer):
 
 	def get_bill_date(self, obj):
 		if obj.bill_date:
-			return datetime.datetime.strftime(obj.bill_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.bill_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -387,7 +387,7 @@ class DeliverySerializer(serializers.ModelSerializer):
 
 	def get_delivery_date(self, obj):
 		if obj.delivery_date:
-			return datetime.datetime.strftime(obj.delivery_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.delivery_date, '%I %b, %Y')
 		else:
 			return None
 
@@ -406,13 +406,13 @@ class PrintingSerializer(serializers.ModelSerializer):
 
 	def get_start_date(self, obj):
 		if obj.start_date:
-			return datetime.datetime.strftime(obj.start_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.start_date, '%I %b, %Y')
 		else:
 			return None
 
 	def get_end_date(self, obj):
 		if obj.end_date:
-			return datetime.datetime.strftime(obj.end_date, '%Y/%m/%d')
+			return datetime.datetime.strftime(obj.end_date, '%I %b, %Y')
 		else:
 			return None
 
