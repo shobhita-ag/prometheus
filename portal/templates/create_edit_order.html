@@ -69,6 +69,9 @@
                 background-color: #a50000;
                 color: antiquewhite;
             }
+            .md-datepicker-input {
+                margin-left: -22px;
+            }
         </style>
 
         <script type="text/javascript">
@@ -223,10 +226,16 @@
             <div flex layout="row" layout-align="center center">
                 <div ng-controller="CreateEditOrder as ctrl" layout="column" ng-cloak style="width: -webkit-fill-available;">
                     <md-content layout-padding>
-                        <section layout="row" layout-align="center center" layout-wrap>
+                        <section layout="row" layout-align="space-between center" layout-wrap>
+                            <md-button class="md-primary" flex="20" href="/dashboard">Prometheus</md-button>
+                            <span class="no-border" flex="20"></span>
+                            <md-button class="md-primary" flex="20" href="/logout">[[ctrl.user]] - Logout</md-button>
+                        </section>
+                        <md-divider></md-divider>
+<!--                         <section layout="row" layout-align="center center" layout-wrap>
                             <span class="no-border" flex="20"></span> 
                             <md-button class="md-primary md-raised" flex="20" href="/logout">[[ctrl.user]] - Logout</md-button>
-                        </section>
+                        </section> -->
                         <div layout="row" layout-sm="column" layout-align="space-around">
                             
                             <md-progress-circular layout="space-around" ng-show="ctrl.loadSpinner" class="md-hue-2" md-mode="indeterminate" md-diameter="40"></md-progress-circular>
@@ -250,7 +259,6 @@
                                                 <div ng-message = "required">This is required</div>
                                             </div>
                                         </md-input-container>
-                                        <!-- <md-input-container> -->
                                             <!-- <md-content> TODO: fix the error message CSS -->
                                             <div flex-gt-xs>
                                                 <md-datepicker name="incoming_date" ng-model="ctrl.order_data.incoming_date" md-placeholder="Incoming date" required>
@@ -260,7 +268,6 @@
                                                 </div>
                                             </div>
                                             <!-- </md-content> -->
-                                        <!-- </md-input-container> -->
                                     </div>
                                     <div layout="row">
     							        <md-input-container class="md-block" flex-gt-sm>
@@ -292,7 +299,6 @@
     							              	<md-option value="[[shoot_type.id]]" ng-repeat="shoot_type in shoot_types">
     							              		[[shoot_type.type_name]]
     							          		</md-option>
-    							              </md-option>
     							            </md-select>
     	                                    <div ng-messages = "create_edit_order_form.shoot_type.$error">
                          						<div ng-message = "required">This is required</div>
@@ -304,7 +310,6 @@
     							              	<md-option value="[[shoot_sub_type.id]]" ng-repeat="shoot_sub_type in shoot_sub_types">
     							              		[[shoot_sub_type.sub_type_name]]
     							          		</md-option>
-    							              </md-option>
     							            </md-select>
     	                                    <div ng-messages = "create_edit_order_form.shoot_sub_type.$error">
                          						<div ng-message = "required">This is required</div>
@@ -318,7 +323,6 @@
     							              	<md-option value="[[work_type.id]]" ng-repeat="work_type in work_types">
     							              		[[work_type.type_name]]
     							          		</md-option>
-    							              </md-option>
     							            </md-select>
     	                                    <div ng-messages = "create_edit_order_form.work_type.$error">
                          						<div ng-message = "required">This is required</div>
@@ -330,7 +334,6 @@
     							              	<md-option value="[[work_sub_type.id]]" ng-repeat="work_sub_type in work_sub_types">
     							              		[[work_sub_type.sub_type_name]]
     							          		</md-option>
-    							              </md-option>
     							            </md-select>
     	                                    <div ng-messages = "create_edit_order_form.work_sub_type.$error">
                          						<div ng-message = "required">This is required</div>
@@ -343,7 +346,6 @@
                                             <md-select name="blouse_stitch" ng-model="ctrl.order_data.has_blouse_stitch" required>
                                                 <md-option value="True">Yes</md-option>
                                                 <md-option value="False">No</md-option>
-                                              </md-option>
                                             </md-select>
                                             <div ng-messages = "create_edit_order_form.blouse_stitch.$error">
                                                 <div ng-message = "required">This is required</div>
@@ -354,7 +356,6 @@
                                             <md-select name="photo_lamination" ng-model="ctrl.order_data.has_photo_lamination" required>
                                                 <md-option value="True">Yes</md-option>
                                                 <md-option value="False">No</md-option>
-                                              </md-option>
                                             </md-select>
                                             <div ng-messages = "create_edit_order_form.photo_lamination.$error">
                                                 <div ng-message = "required">This is required</div>
@@ -368,7 +369,6 @@
     							              	<md-option value="[[page_quality.id]]" ng-repeat="page_quality in page_qualities">
     							              		[[page_quality.quality_name]]
     							          		</md-option>
-    							              </md-option>
     							            </md-select>
     	                                    <div ng-messages = "create_edit_order_form.outer_page_quality.$error">
                          						<div ng-message = "required">This is required</div>
@@ -380,7 +380,6 @@
     							              	<md-option value="[[page_quality.id]]" ng-repeat="page_quality in page_qualities">
     							              		[[page_quality.quality_name]]
     							          		</md-option>
-    							              </md-option>
     							            </md-select>
     	                                    <div ng-messages = "create_edit_order_form.inner_page_quality.$error">
                          						<div ng-message = "required">This is required</div>
@@ -394,7 +393,6 @@
     							              	<md-option value="[[binding_type.id]]" ng-repeat="binding_type in binding_types">
     							              		[[binding_type.type_name]]
     							          		</md-option>
-    							              </md-option>
     							            </md-select>
     	                                    <div ng-messages = "create_edit_order_form.binding_type.$error">
                          						<div ng-message = "required">This is required</div>
