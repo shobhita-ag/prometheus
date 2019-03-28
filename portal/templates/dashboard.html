@@ -162,7 +162,7 @@
 
                     var url = "/dashboard/order_data?page_size=" + $scope.itemsPerPage + "&page_index=" + $scope.currentPage;
                     if (self.status_filter && self.status_filter !== "") {
-                        url = url + "status=" + self.status_filter;
+                        url = url + "&status=" + self.status_filter;
                     }
                     
                     $http({
