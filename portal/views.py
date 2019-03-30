@@ -415,6 +415,7 @@ class DashboardOrders(APIView):
 			user = request.user
 			order_status = request.GET.get('status', None)
 			incoming_date = request.GET.get('incoming_date', None)
+			client_name = request.GET.get('client_name', None)
 
 			page_size = request.GET.get('page_size', 10)
 			page_index = request.GET.get('page_index', 1)
@@ -427,6 +428,9 @@ class DashboardOrders(APIView):
 
 			if incoming_date:
 				orders = orders.filter(incoming_date = incoming_date)
+
+			if client_name:
+				orders = orders.filter(client_name__icontains=client_name)
 
 			orders = orders.order_by('-incoming_date')
 
