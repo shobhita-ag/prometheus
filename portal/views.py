@@ -68,7 +68,15 @@ class Dashboard(APIView):
 	def get(self, request):
 		if not request.user.is_authenticated():
 			return redirect('login')
-		return render(request, context={'ops_user': request.user.username}, template_name='dashboard.html')
+
+		user = request.user
+		#find if user is allowed to create/edit orders
+		from portal.helper import order_status_user_group_permissions_map
+		user_groups = user.groups.all().values_list('id', flat=True)
+		groups_allowed = order_status_user_group_permissions_map[1]
+		is_user_allowed_set = set.intersection(set(groups_allowed), set(user_groups))
+		is_user_allowed = True if len(is_user_allowed_set) > 0 else False
+		return render(request, context={"ops_user": request.user.username, "has_order_permissions": is_user_allowed}, template_name='dashboard.html')
 
 
 class GetDialogData(APIView):
@@ -437,9 +445,12 @@ class DashboardOrders(APIView):
 			pages = Paginator(orders, page_size)
 			page_count = pages.num_pages
 			orders = pages.page(page_index).object_list
-			total_orders = pages.count
 			order_data = OrderSummarySerializer(orders, many=True, context={"user": user}).data
+
+			total_orders = pages.count
+
 			return Response({"order_data": order_data, "page_count" : page_count, "total_orders" : total_orders}, status=status.HTTP_200_OK)
+
 		except Exception as e:
 			print("Error while fetching orders:" + str(e))
 			return Response({"response" : "Error while fetching orders"}, status = status.HTTP_400_BAD_REQUEST)

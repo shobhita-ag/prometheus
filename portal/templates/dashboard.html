@@ -92,7 +92,7 @@
         </style>
 
         <script type="text/javascript">
-            var app = angular.module('Dashboard',['ngMaterial', 'ngMessages', 'vAccordion', 'ngAnimate', 'shared', 'ui.bootstrap']).value('ops_user', '{{ops_user}}');
+            var app = angular.module('Dashboard',['ngMaterial', 'ngMessages', 'vAccordion', 'ngAnimate', 'shared', 'ui.bootstrap']).value('ops_user', '{{ops_user}}').value("has_order_permissions", "{{has_order_permissions}}");
             app.config(['$httpProvider', function($httpProvider) {
                 $httpProvider.defaults.xsrfCookieName = 'csrftoken';
                 $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -107,13 +107,14 @@
                    .defaultIconSet('img/person_pin.svg', 24);
             }])
 
-            app.controller('DashboardCtrl', function DashboardCtrl ($scope, $timeout, $q, $http, $window, $mdDialog, $interval, commonUtility, ops_user) {
+            app.controller('DashboardCtrl', function DashboardCtrl ($scope, $timeout, $q, $http, $window, $mdDialog, $interval, commonUtility, ops_user, has_order_permissions) {
                 var self = this;
 
                 self.timer = 0;
                 self.show_err = false;
 
                 self.user = ops_user;
+                self.has_order_permissions = has_order_permissions;
 
                 self.loadSpinner = false;
                 $scope.currentPage = 1;
@@ -188,7 +189,7 @@
                     	self.loadSpinner = false;
                         var response_data = response.data;
                         self.order_data = response_data["order_data"];
-                        $scope.totalItems = response_data["total_orders"];
+                        self.totalItems = response_data["total_orders"];
                     }, function(error_response) {
                         var response_data = error_response.data;
                         commonUtility.displayErrorMsg(response_data["response"]);
@@ -281,7 +282,7 @@
                         </section>
                         <md-divider></md-divider>
                         <section layout="row" layout-align="space-between center" layout-wrap>
-                            <md-button class="md-primary" flex="20" ng-click="ctrl.redirectToOrderPage('')">
+                            <md-button class="md-primary" flex="20" ng-click="ctrl.redirectToOrderPage('')" ng-disabled="ctrl.has_order_permissions === 'False'">
                                 Create new order
                             </md-button>
                             <span class="no-border" flex="20"></span>
@@ -339,7 +340,7 @@
                                         <section layout="row">
                                             <section layout="column">
                                                 <md-button class="defaultcase md-primary" layout="row" layout-align="start center" ng-click="ctrl.getOrderFullView($event, order.id)">View</md-button>
-                                                <md-button class="defaultcase md-primary" layout="row" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)">Edit</md-button>
+                                                <md-button class="defaultcase md-primary" layout="row" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)" ng-disabled="ctrl.has_order_permissions == 'False'">Edit</md-button>
                                             </section>
                                             <section layout="column">
                                                 <md-button ng-repeat="next_status_tuple in order.next_status" ng-hide="order.next_status === null" ng-disabled="next_status_tuple.is_allowed == false" class="defaultcase md-primary" layout="row" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, next_status_tuple.value, has_next_status_form)">[[next_status_tuple.name]]</md-button>
@@ -350,7 +351,7 @@
                             </tbody>
                         </table>
                         <section layout="row" layout-align="space-between center" layout-wrap>
-                            <span><b>Total orders:[[totalItems]]</b></span>
+                            <span><b>Total orders:[[ctrl.totalItems]]</b></span>
                             <pagination
                               ng-model="currentPage"
                               total-items="totalItems"
