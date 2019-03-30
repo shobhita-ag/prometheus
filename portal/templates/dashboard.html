@@ -320,20 +320,29 @@
                                     <td>[[order.work_type]]</td>
                                     <td>[[order.status]]</td>
                                     <td>
-                                        <md-button class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.getOrderFullView($event, order.id)">View</md-button>
-                                        <md-button class="defaultcase md-primary" layout="column" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)">Edit</md-button>
-                                        <md-button ng-hide="order.next_status === null" class="defaultcase md-primary" layout="column" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, order.next_status.value, has_next_status_form)">[[order.next_status.name]]</md-button>           
+                                        <section layout="row">
+                                            <section layout="column">
+                                                <md-button class="defaultcase md-primary" layout="row" layout-align="start center" ng-click="ctrl.getOrderFullView($event, order.id)">View</md-button>
+                                                <md-button class="defaultcase md-primary" layout="row" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)">Edit</md-button>
+                                            </section>
+                                            <section layout="column">
+                                                <md-button ng-repeat="next_status_tuple in order.next_status" ng-hide="order.next_status === null" ng-disabled="next_status_tuple.is_allowed == false" class="defaultcase md-primary" layout="row" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, next_status_tuple.value, has_next_status_form)">[[next_status_tuple.name]]</md-button>
+                                            </section>
+                                        </section>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <pagination
-                          ng-model="currentPage"
-                          total-items="totalItems"
-                          items-per-page="itemsPerPage"
-                          boundary-links="true"
-                          ng-change = "ctrl.loadOrderData()">
-                        </pagination>
+                        <section layout="row" layout-align="space-between center" layout-wrap>
+                            <span><b>Total orders:[[totalItems]]</b></span>
+                            <pagination
+                              ng-model="currentPage"
+                              total-items="totalItems"
+                              items-per-page="itemsPerPage"
+                              boundary-links="true"
+                              ng-change = "ctrl.loadOrderData()">
+                            </pagination>
+                        </section>
                     </md-content>
                 </div>
             </div>

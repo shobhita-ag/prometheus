@@ -118,7 +118,7 @@ class RenderDialog(APIView):
 		import portal.models
 		
 		user = request.user
-		dialog_data = request.data.get('dialog_data', None)
+		dialog_data = request.data.get('dialog_data', {})
 		order_id = request.data.get('order_id', None)
 		date = convert_utc_into_ist(request.data.get('date', None))
 		next_status = request.data.get('next_status', None)
@@ -127,53 +127,121 @@ class RenderDialog(APIView):
 		try:
 			# create next_status's table entry
 			if next_status == 2:
-				Shoot.objects.create(order_id = order_id, shooting_location = dialog_data.get('shooting_location', None),
+				try:
+					Shoot.objects.get(id = dialog_data.get("id"))
+					Shoot.objects.filter(id = dialog_data.get('id')).update(shooting_location = dialog_data.get('shooting_location', None),
 					studio_name = dialog_data.get('studio_name', None), model_name = dialog_data.get('model_name', None),
 					shoot_date = convert_utc_into_ist(dialog_data.get('shoot_date', None)), shoot_user = user, start_date = date)
+				except Shoot.DoesNotExist:
+					Shoot.objects.create(order_id = order_id, shooting_location = dialog_data.get('shooting_location', None),
+					studio_name = dialog_data.get('studio_name', None), model_name = dialog_data.get('model_name', None),
+					shoot_date = convert_utc_into_ist(dialog_data.get('shoot_date', None)), shoot_user = user, start_date = date)
+
 			elif next_status == 3:
 				Shoot.objects.filter(id = dialog_data.get('id')).update(shooting_location = dialog_data.get('shooting_location', None),
 					studio_name = dialog_data.get('studio_name', None), model_name = dialog_data.get('model_name', None),
 					shoot_date = convert_utc_into_ist(dialog_data.get('shoot_date', None)), shoot_user = user, end_date = date)
+
 			elif next_status == 4:
-				PoseSelection.objects.create(order_id = order_id, pose_selection_user = user, start_date = date)
+				try:
+					PoseSelection.objects.get(id = dialog_data.get('id'))
+					PoseSelection.objects.filter(id = dialog_data.get('id')).update(pose_selection_user = user, start_date = date)
+				except PoseSelection.DoesNotExist:
+					PoseSelection.objects.create(order_id = order_id, pose_selection_user = user, start_date = date)
+
 			elif next_status == 5:
 				PoseSelection.objects.filter(id = dialog_data.get('id')).update(pose_selection_user = user, end_date = date)
+
 			elif next_status == 6:
-				PoseCutting.objects.create(order_id = order_id, pose_cutting_user = user, 
+				try:
+					PoseCutting.objects.get(id = dialog_data.get('id'))
+					PoseCutting.objects.filter(id = dialog_data.get('id')).update(pose_cutting_user = user,
 					number_of_poses = dialog_data.get('number_of_poses', None), start_date = date)
+				except PoseCutting.DoesNotExist:
+					PoseCutting.objects.create(order_id = order_id, pose_cutting_user = user, 
+					number_of_poses = dialog_data.get('number_of_poses', None), start_date = date)
+
 			elif next_status == 7:
 				PoseCutting.objects.filter(id = dialog_data.get('id')).update(pose_cutting_user = user,
 					number_of_poses = dialog_data.get('number_of_poses', None), end_date = date)
+
 			elif next_status == 8:
-				Layout.objects.create(order_id = order_id, layout_user = user, start_date = date)
+				try:
+					Layout.objects.get(id = dialog_data.get('id'))
+					Layout.objects.filter(id = dialog_data.get('id')).update(layout_user = user, start_date = date)
+				except Layout.DoesNotExist:
+					Layout.objects.create(order_id = order_id, layout_user = user, start_date = date)
+
 			elif next_status == 9:
 				Layout.objects.filter(id = dialog_data.get('id')).update(layout_user = user, end_date = date)
+
 			elif next_status == 10:
-				ColorCorrection.objects.create(order_id = order_id, color_correction_user = user, start_date = date)
+				try:
+					ColorCorrection.objects.get(id = dialog_data.get('id'))
+					ColorCorrection.objects.filter(id = dialog_data.get('id')).update(color_correction_user = user, start_date = date)
+				except ColorCorrection.DoesNotExist:
+					ColorCorrection.objects.create(order_id = order_id, color_correction_user = user, start_date = date)
+
 			elif next_status == 11:
 				ColorCorrection.objects.filter(id = dialog_data.get('id')).update(color_correction_user = user, end_date = date)
+
 			elif next_status == 12:
-				DummySent.objects.create(order_id = order_id, dummy_sent_user = user, dummy_sent_date = date)
+				try:
+					DummySent.objects.get(id = dialog_data.get('id'))
+					DummySent.objects.filter(id = dialog_data.get('id')).update(order_id = order_id, dummy_sent_user = user, dummy_sent_date = date)
+				except DummySent.DoesNotExist:
+					DummySent.objects.create(order_id = order_id, dummy_sent_user = user, dummy_sent_date = date)
+
 			elif next_status == 13:
-				ChangesTaken.objects.create(order_id = order_id, changes_taken_user = user, changes_taken_date = date,
+				try:
+					ChangesTaken.objects.get(id = dialog_data.get('id'))
+					ChangesTaken.objects.filter(id = dialog_data.get('id')).update(order_id = order_id, changes_taken_user = user, changes_taken_date = date,
 					remarks = dialog_data.get('remarks', None))
+				except ChangesTaken.DoesNotExist:
+					ChangesTaken.objects.create(order_id = order_id, changes_taken_user = user, changes_taken_date = date,
+					remarks = dialog_data.get('remarks', None))
+
 			elif next_status == 14:
-				ChangesImplementation.objects.create(order_id = order_id, changes_implementation_user = user, start_date = date)
+				try:
+					ChangesImplementation.objects.get(id = dialog_data.get('id'))
+					ChangesImplementation.objects.filter(id = dialog_data.get('id')).update(changes_implementation_user = user, start_date = date)
+				except ChangesImplementation.DoesNotExist:
+					ChangesImplementation.objects.create(order_id = order_id, changes_implementation_user = user, start_date = date)
+
 			elif next_status == 15:
 				ChangesImplementation.objects.filter(id = dialog_data.get('id')).update(changes_implementation_user = user, end_date = date)
+
 			elif next_status == 16:
-				Printing.objects.create(order_id = order_id, folder_number = dialog_data.get('folder_number', None),
+				try:
+					Printing.objects.get(id = dialog_data.get('id'))
+					Printing.objects.filter(id = dialog_data.get('id')).update(folder_number = dialog_data.get('folder_number', None),
 					printing_user = user, start_date = date)
+				except Printing.DoesNotExist:
+					Printing.objects.create(order_id = order_id, folder_number = dialog_data.get('folder_number', None),
+					printing_user = user, start_date = date)
+
 			elif next_status == 17:
 				Printing.objects.filter(id = dialog_data.get('id')).update(folder_number = dialog_data.get('folder_number', None),
 					printing_user = user, end_date = date)
+
 			elif next_status == 18:
-				BillCreation.objects.create(order_id = order_id, bill_creation_user = user,
+				try:
+					BillCreation.objects.get(id = dialog_data.get('id'))
+					BillCreation.objects.filter(id = dialog_data.get('id')).update(order_id = order_id, bill_creation_user = user,
 					bill_number = dialog_data.get('bill_number', None), bill_date = convert_utc_into_ist(dialog_data.get('bill_date', None)))
+				except BillCreation.DoesNotExist:
+					BillCreation.objects.create(order_id = order_id, bill_creation_user = user,
+					bill_number = dialog_data.get('bill_number', None), bill_date = convert_utc_into_ist(dialog_data.get('bill_date', None)))
+
 			elif next_status == 19:
-				Delivery.objects.create(order_id = order_id, delivery_user = user, delivery_date = date)
+				try:
+					Delivery.objects.get(id = dialog_data.get('id'))
+					Delivery.objects.filter(id = dialog_data.get('id')).update(order_id = order_id, delivery_user = user, delivery_date = date)
+				except Delivery.DoesNotExist:
+					Delivery.objects.create(order_id = order_id, delivery_user = user, delivery_date = date)
+
 			else:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
+				return Response({"response": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
 			#update order status
 			Order.objects.filter(id=order_id).update(status=next_status)
@@ -196,7 +264,7 @@ class CreateEditOrder(APIView):
 		if not request.user.is_authenticated():
 			return redirect('login')
 
-		order_data = request.data.get('order_data', None)
+		DashboardOrders = request.data.get('order_data', None)
 		order_id = request.data.get('order_id', None)
 		client_name = order_data.get('client_name', None)
 		incoming_date = order_data.get('incoming_date', None)
@@ -340,11 +408,11 @@ class GetOrderFullView(APIView):
 
 class DashboardOrders(APIView):
 
-	#TODO: test this
 	def get(self, request):
 		if not request.user.is_authenticated():
 			return redirect('login')
 		try:
+			user = request.user
 			order_status = request.GET.get('status', None)
 			incoming_date = request.GET.get('incoming_date', None)
 
@@ -366,8 +434,7 @@ class DashboardOrders(APIView):
 			page_count = pages.num_pages
 			orders = pages.page(page_index).object_list
 			total_orders = pages.count
-
-			order_data = OrderSummarySerializer(orders, many=True).data
+			order_data = OrderSummarySerializer(orders, many=True, context={"user": user}).data
 			return Response({"order_data": order_data, "page_count" : page_count, "total_orders" : total_orders}, status=status.HTTP_200_OK)
 		except Exception as e:
 			print("Error while fetching orders:" + str(e))

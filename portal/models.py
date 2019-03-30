@@ -171,9 +171,9 @@ class Order(TimeStampedModel):
 	def delivered(self):
 		pass
 
-	def get_next_state(self):
+	def get_next_state(self, request_user):
 		from portal.helper import get_next_status
-		return get_next_status(self)
+		return get_next_status(self, request_user)
 												
 	def __unicode__(self):
 		return self.client_name + " - " + self.client_challan_number

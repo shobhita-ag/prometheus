@@ -32,7 +32,8 @@ class OrderSummarySerializer(serializers.ModelSerializer):
 		return obj.get_status_display()
 
 	def get_next_status(self, obj):
-		return obj.get_next_state()
+		request_user = self.context.get('user', None)
+		return obj.get_next_state(request_user)
 
 	def get_has_next_status_form(self, obj):
 		return "true";		
