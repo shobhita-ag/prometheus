@@ -5,7 +5,7 @@
       </div>
     </md-toolbar>
     <md-dialog-content>
-        <md-content class="md-padding">
+        <!-- <md-content class="md-padding"> -->
             <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
                 <form name="changes_taken_dialog_form" method="post">
                     {% csrf_token %}
@@ -15,12 +15,12 @@
                               <input type="text" name="remarks" ng-model="data.dialog_data.remarks">
                           </md-input-container>
                       </div>
-                      <md-button class="md-raised md-warn pull-right" style="width:30%;" type="reset" ng-click="cancel()">
+                      <md-button class="md-raised pull-right" style="width:30%;" type="reset" ng-click="cancel()">
                         Cancel
                       </md-button> 
-                      <md-button ng-disabled="changes_taken_dialog_form.$invalid" class="md-raised md-warn pull-right" style="width:30%;" type="submit" ng-click="save()">Save</md-button>                          
+                      <md-button ng-disabled="changes_taken_dialog_form.$invalid" class="md-raised pull-right" style="width:30%;" type="submit" ng-click="save()">Save</md-button>                          
                 </form>
             </div>
-        </md-content>
+        <!-- </md-content> -->
     </md-dialog-content>
 </md-dialog>

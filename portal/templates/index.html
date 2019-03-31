@@ -19,7 +19,7 @@
             angular.module('prometheus',['ngMaterial'])
             .config(function($mdThemingProvider) {
               $mdThemingProvider.theme('default')
-                .primaryPalette('red', {
+                .primaryPalette('indigo', {
                   'default': '600',
                 })
                 .accentPalette('grey', {
@@ -27,6 +27,21 @@
                 });
                 });
         </script>
+        <style type="text/css">
+            .create_order {
+                background-color: rgb(63, 81, 181);
+                color: white;
+                font-size: 12px;
+                margin: 0px;
+                width: 30%;
+            }
+            .create_order:hover {
+                color: rgb(63, 81, 181);
+                background-color: #ddd;
+                margin: 0px;
+                width: 30%;
+            }
+        </style>
     </head>
     <body style="padding-top:0px;">
         <section layout="row">
@@ -35,7 +50,6 @@
                     <md-toolbar>
                         <div class="md-toolbar-tools" layout-align="center center">
                             <span class="text-danger textCenter" style="display:block;color: white;font-weight: bold;">Welcome to Prometheus</span>
-                            <span class="text-danger textCenter" style="display:block;color: white;font-weight: bold;">{{message}}</span>
                         </div>
                     </md-toolbar>
                     <md-content class="md-padding">
@@ -50,7 +64,8 @@
                                     <label>Password</label>
                                     <input type="password" name="password" required>
                                 </md-input-container>
-                                    <md-button class="md-raised md-warn pull-right" style="width:30%;" type="submit">Login</md-button>
+                                <span class="text-danger textCenter" style="vertical-align: middle;">{{message}}</span>
+                                <md-button class="create_order pull-right" type="submit">Login</md-button>
                             </form>
                         </div>
                     </md-content>

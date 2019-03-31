@@ -76,7 +76,7 @@ class Dashboard(APIView):
 		groups_allowed = order_status_user_group_permissions_map[1]
 		is_user_allowed_set = set.intersection(set(groups_allowed), set(user_groups))
 		is_user_allowed = True if len(is_user_allowed_set) > 0 else False
-		return render(request, context={"ops_user": request.user.username, "has_order_permissions": is_user_allowed}, template_name='dashboard.html')
+		return render(request, context={"ops_user": request.user.username.upper(), "has_order_permissions": is_user_allowed}, template_name='dashboard.html')
 
 
 class GetDialogData(APIView):
@@ -266,7 +266,7 @@ class CreateEditOrder(APIView):
 		if not request.user.is_authenticated():
 			return redirect('login')
 		order_id = request.GET.get('order_id', None)
-		return render(request, context={"order_id": order_id, "ops_user": request.user.username}, template_name='create_edit_order.html')
+		return render(request, context={"order_id": order_id, "ops_user": request.user.username.upper()}, template_name='create_edit_order.html')
 
 	def post(self, request):
 		if not request.user.is_authenticated():

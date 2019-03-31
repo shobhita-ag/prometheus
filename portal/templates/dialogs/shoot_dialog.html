@@ -5,7 +5,7 @@
       </div>
     </md-toolbar>
     <md-dialog-content>
-        <md-content class="md-padding">
+        <!-- <md-content class="md-padding"> -->
             <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
                 <form name="shoot_dialog_form" method="post">
                     {% csrf_token %}
@@ -14,14 +14,14 @@
                               <label>Studio name</label>
                               <input required type="text" name="studio_name" ng-model="data.dialog_data.studio_name">
                               <div ng-messages="shoot_dialog_form.studio_name.$error">
-                                  <div ng-message="required">This is required</div>
+                                  <div ng-message="required">*required</div>
                               </div>
                           </md-input-container>
                           <md-input-container class="md-block" flex-gt-sm>
                               <label>Model name</label>
                               <input required type="text" name="model_name" ng-model="data.dialog_data.model_name">
                               <div ng-messages="shoot_dialog_form.model_name.$error">
-                                  <div ng-message="required">This is required</div>
+                                  <div ng-message="required">*required</div>
                               </div>
                           </md-input-container>
                       </div>
@@ -33,25 +33,25 @@
                                   <md-option value="2">Outside Studio</md-option>
                               </md-select>
                               <div ng-messages="shoot_dialog_form.shooting_location.$error">
-                                  <div ng-message="required">This is required</div>
+                                  <div ng-message="required">*required</div>
                               </div>                          
                           </md-input-container>
                           <!-- <md-input-container> -->
-                              <div flex-gt-xs>
-                                  <md-datepicker name="incoming_date" ng-model="data.dialog_data.shoot_date" md-placeholder="Shoot date" required>
+                            <div flex-gt-sm>
+                                  <md-datepicker name="incoming_date" ng-model="data.dialog_data.shoot_date" md-placeholder="Shoot date" required style="position: absolute;">
                                   </md-datepicker>
-                                  <div "validation-messages" ng-messages = "shoot_dialog_form.incoming_date.$error">
-                                      <div ng-message = "required">This is required</div>
+                                  <div style="position: relative;" ng-messages = "shoot_dialog_form.incoming_date.$error">
+                                      <div class="date_label" ng-message = "required">*required</div>
                                   </div>
-                              </div>
+                            </div>
                           <!-- </md-input-container> -->
                       </div>
-                      <md-button class="md-raised md-warn pull-right" style="width:30%;" type="reset" ng-click="cancel()">
+                      <md-button class="md-raised pull-right" style="width:30%;" type="reset" ng-click="cancel()">
                         Cancel
                       </md-button> 
-                      <md-button ng-disabled="shoot_dialog_form.$invalid" class="md-raised md-warn pull-right" style="width:30%;" type="submit" ng-click="save()">Save</md-button>
+                      <md-button ng-disabled="shoot_dialog_form.$invalid" class="md-raised pull-right" style="width:30%;" type="submit" ng-click="save()">Save</md-button>
                 </form>
             </div>
-        </md-content>
+        <!-- </md-content> -->
     </md-dialog-content>
 </md-dialog>

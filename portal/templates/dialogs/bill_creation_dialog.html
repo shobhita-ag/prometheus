@@ -5,7 +5,7 @@
       </div>
     </md-toolbar>
     <md-dialog-content>
-        <md-content class="md-padding">
+        <!-- <md-content class="md-padding"> -->
             <div flex-sm="100" flex-gt-sm="80" layout-align="center center">
                 <form name="bill_creation_dialog_form" method="post">
                     {% csrf_token %}
@@ -14,7 +14,7 @@
                               <label>Bill number</label>
                               <input required type="text" name="bill_number" ng-model="data.dialog_data.bill_number">
                               <div ng-messages = "bill_creation_dialog_form.bill_number.$error">
-                                  <div ng-message = "required">This is required</div>
+                                  <div ng-message = "required">*required</div>
                               </div>
                           </md-input-container>
                           <!-- <md-input-container> -->
@@ -24,12 +24,12 @@
                               </div>
                           <!-- </md-input-container> -->
                       </div>
-                      <md-button class="md-raised md-warn pull-right" style="width:30%;" type="reset" ng-click="cancel()">
+                      <md-button class="md-raised pull-right" style="width:30%;" type="reset" ng-click="cancel()">
                         Cancel
                       </md-button> 
-                      <md-button ng-disabled="bill_creation_dialog_form.$invalid" class="md-raised md-warn pull-right" style="width:30%;" type="submit" ng-click="save()">Save</md-button>                          
+                      <md-button ng-disabled="bill_creation_dialog_form.$invalid" class="md-raised pull-right" style="width:30%;" type="submit" ng-click="save()">Save</md-button>                          
                 </form>
             </div>
-        </md-content>
+        <!-- </md-content> -->
     </md-dialog-content>
 </md-dialog>

@@ -25,6 +25,9 @@
         <script data-require="ui-bootstrap@*" data-semver="0.12.1" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.min.js"></script>
 
         <style type="text/css">
+            .md-padding {
+                padding: 0px;
+            }
             hr {
                 margin-bottom: 5px;
                 margin-top: 5px;
@@ -54,9 +57,53 @@
                 padding-left:20px;
                 padding-right:20px;
             }
+            md-dialog button.md-warn {
+                background-color: rgb(63, 81, 181);
+                color: white;
+                font-size: 12px;
+            }
+            md-dialog button.md-warn:hover {
+                color: rgb(63, 81, 181);
+                background-color: #ddd;
+            }
+            section.header {
+                background-color: #3f51b5;
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+            a.header {
+                color: white;
+                font-size: 14px;
+            }
+            .create_order {
+                background-color: rgb(63, 81, 181);
+                color: white;
+                font-size: 12px;
+                margin: 0px;
+            }
+            .create_order:hover {
+                color: rgb(63, 81, 181);
+                background-color: #ddd;
+                margin: 0px;
+            }
+            td button.md-primary {
+                text-decoration: underline;
+            }
+            td button.md-primary:hover {
+                text-decoration: underline;
+            }
+            md-select span {
+                text-align: center;
+            }
+            md-option {
+                text-align: center;
+            }
             div.zones {
                 /*padding: 10px;*/
                 text-align: inherit;
+            }
+            span.total_orders {
+                font-size: 20px;
             }
             span.green {
                 background-color: #87e087;
@@ -75,9 +122,24 @@
                 text-transform: none;
             }
 
-            .md-datepicker-input {
-                margin-left: -22px;
+            md-icon.md-datepicker-calendar-icon{
+                margin-left: 25px;
             }
+
+            .date_label {
+                padding-right: 50px;
+                color: rgb(244,67,54);
+                font-size: 12px;
+                line-height: 14px;
+                overflow: hidden;
+                padding-top: 5px;
+                margin-top: 55px;
+                margin-left: 72px;
+            }
+
+            /*.md-datepicker-input {
+                margin-left: -22px;
+            }*/
 
             .hint {
                 position: absolute;
@@ -88,6 +150,24 @@
                 line-height: 14px;
                 transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
                 color: grey;
+            }
+
+            .md-virtual-repeat-container .md-virtual-repeat-scroller {
+                left: auto;
+            }
+
+            md-datepicker {
+                margin-top: 15px;
+            }
+
+            .md-datepicker-input-mask {
+                height: auto;
+                width: auto;
+            }
+
+            .pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {
+                background-color: #4355b7;
+                border-color: #4355b7;
             }
         </style>
 
@@ -166,6 +246,12 @@
                     });
                 };
 
+                self.resetFilters = function() {
+                    self.status_filter = "";
+                    self.client_name_filter = "";
+                    self.loadOrderData();
+                };
+
                 self.loadOrderData = function() {
 
                 	self.loadSpinner = true;
@@ -197,6 +283,8 @@
                         self.loadSpinner = false;
                     });
                 };
+
+                self.loadOrderData();
 
                 self.moveToNextStage = function(event, order_id, next_status, has_next_status_form) {
                     //get dialog data only for shooting, cutting and printing status since only they have data to be pre-populated
@@ -275,91 +363,125 @@
             <div flex layout="row" layout-align="center center">
                 <div ng-controller="DashboardCtrl as ctrl" layout="column" ng-cloak style="width: -webkit-fill-available;">
                     <md-content class="md-padding">
-                        <section layout="row" layout-align="space-between center" layout-wrap>
-                            <md-button class="md-primary" flex="20" href="/dashboard">Prometheus</md-button>
-                            <span class="no-border" flex="20"></span>
-                            <md-button class="md-primary" flex="20" href="/logout">[[ctrl.user]] - Logout</md-button>
+                        <section class="header" layout="row" layout-align="space-between center" layout-wrap>
+                            <div flex="10"></div>
+                            <div flex="30">
+                                <a class="header" href="/dashboard"><b>PROMETHEUS</b></a>
+                            </div>
+                            <div flex="20"></div>
+                            <div flex="30" style="text-align-last: right;">
+                                <a class="header" href="/logout"><b>LOGOUT - [[ctrl.user]]</b></a>
+                            </div>
+                            <div flex="10"></div>
                         </section>
                         <md-divider></md-divider>
-                        <section layout="row" layout-align="space-between center" layout-wrap>
-                            <md-button class="md-primary" flex="20" ng-click="ctrl.redirectToOrderPage('')" ng-disabled="ctrl.has_order_permissions === 'False'">
-                                Create new order
-                            </md-button>
-                            <span class="no-border" flex="20"></span>
-                            <md-input-container class="md-block" flex-gt-sm>
-                                <input type="text" name="client_name_filter" ng-model="ctrl.client_name_filter" ng-keyup="$event.keyCode == 13 && ctrl.loadOrderData()">
-                                <div class="hint">Search for client name and enter</div>
-                            </md-input-container>
-                            <span class="no-border" flex="20"></span>
-                            <md-select name="status_filter" ng-model="ctrl.status_filter" ng-change="ctrl.loadOrderData()">
-                                <md-option value="" ng-selected="true">All</md-option>
-                                <md-option value="1">Order Created</md-option>
-                                <md-option value="2">Sent to Shooting</md-option>
-                                <md-option value="3">Shooting Completed</md-option>
-                                <md-option value="4">Pose Selection Started</md-option>
-                                <md-option value="5">Pose Selection Completed</md-option>
-                                <md-option value="6">Pose Cutting Started</md-option>
-                                <md-option value="7">Pose Cutting Completed</md-option>
-                                <md-option value="8">Layout Creation Started</md-option>
-                                <md-option value="9">Layout Creation Completed</md-option>
-                                <md-option value="10">Color Correction Started</md-option>
-                                <md-option value="11">Color Correction Completed</md-option>
-                                <md-option value="12">Dummy Sent to Client</md-option>
-                                <md-option value="13">Changes Taken</md-option>
-                                <md-option value="14">Changes Implementation Started</md-option>
-                                <md-option value="15">Changes Implementation Completed</md-option>
-                                <md-option value="16">Printing Started</md-option>
-                                <md-option value="17">Printing Completed</md-option>
-                                <md-option value="18">Bill Created</md-option>
-                                <md-option value="19">Delivery Done</md-option>
-                            </md-select>
-                        </section>
-                        <table align="center" id="dashTable">
-                            <thead>
-                                <th>Client</th>
-                                <th>Incoming Date</th>
-                                <th>Challan Number</th>   
-                                <th>Garment Type</th>
-                                <th>Work Type</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </thead>
-                            <h2 ng-show="ctrl.show_err" style="text-align: center;">
-                                [[ctrl.message]]
-                            </h2>
-                            <md-progress-circular ng-hide="ctrl.show_err" layout="column" ng-show="ctrl.loadSpinner" class="md-warn md-hue-3" md-diameter="40"></md-progress-circular>
-                            <tbody>
-                                <tr ng-repeat="order in ctrl.order_data" class="zones">
-                                    <td>[[order.client_name]]</td>
-                                    <td>[[order.incoming_date]]</td>
-                                    <td>[[order.client_challan_number]]</td>   
-                                    <td>[[order.garment_type]]</td>
-                                    <td>[[order.work_type]]</td>
-                                    <td>[[order.status]]</td>
-                                    <td>
-                                        <section layout="row">
-                                            <section layout="column">
-                                                <md-button class="defaultcase md-primary" layout="row" layout-align="start center" ng-click="ctrl.getOrderFullView($event, order.id)">View</md-button>
-                                                <md-button class="defaultcase md-primary" layout="row" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)" ng-disabled="ctrl.has_order_permissions == 'False'">Edit</md-button>
-                                            </section>
-                                            <section layout="column">
-                                                <md-button ng-repeat="next_status_tuple in order.next_status" ng-hide="order.next_status === null" ng-disabled="next_status_tuple.is_allowed == false" class="defaultcase md-primary" layout="row" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, next_status_tuple.value, has_next_status_form)">[[next_status_tuple.name]]</md-button>
-                                            </section>
+                        <div layout="column" style="margin-top: 15px;">
+                            <div flex layout="row">
+                                <div flex="10"></div>
+                                <div flex="20">
+                                    <md-button class="create_order" ng-click="ctrl.redirectToOrderPage('')" ng-disabled="ctrl.has_order_permissions === 'False'">
+                                        Create new order
+                                    </md-button>
+                                </div>
+                                <div flex="20">
+                                    <md-input-container class="md-block">
+                                        <input type="text" name="client_name_filter" ng-model="ctrl.client_name_filter" ng-keyup="$event.keyCode == 13 && ctrl.loadOrderData()">
+                                        <div class="hint">Search for client name and press Enter</div>
+                                    </md-input-container>
+                                </div>
+                                <div flex="5"></div>
+                                <div flex="20">
+                                    <md-select name="status_filter" ng-model="ctrl.status_filter" ng-change="ctrl.loadOrderData()" placeholder="Select a status to filter">
+                                        <md-option value="1">Order Created</md-option>
+                                        <md-option value="2">Sent to Shooting</md-option>
+                                        <md-option value="3">Shooting Completed</md-option>
+                                        <md-option value="4">Pose Selection Started</md-option>
+                                        <md-option value="5">Pose Selection Completed</md-option>
+                                        <md-option value="6">Pose Cutting Started</md-option>
+                                        <md-option value="7">Pose Cutting Completed</md-option>
+                                        <md-option value="8">Layout Creation Started</md-option>
+                                        <md-option value="9">Layout Creation Completed</md-option>
+                                        <md-option value="10">Color Correction Started</md-option>
+                                        <md-option value="11">Color Correction Completed</md-option>
+                                        <md-option value="12">Dummy Sent to Client</md-option>
+                                        <md-option value="13">Changes Taken</md-option>
+                                        <md-option value="14">Changes Implementation Started</md-option>
+                                        <md-option value="15">Changes Implementation Completed</md-option>
+                                        <md-option value="16">Printing Started</md-option>
+                                        <md-option value="17">Printing Completed</md-option>
+                                        <md-option value="18">Bill Created</md-option>
+                                        <md-option value="19">Delivery Done</md-option>
+                                    </md-select>
+                                </div>       
+                                <div flex="5"></div>     
+                                <div flex="10" style="text-align-last: end;">
+                                    <md-button class="create_order" ng-click="ctrl.resetFilters()">
+                                        RESET FILTERS
+                                    </md-button>
+                                </div>
+                                <div flex="10"></div>
+                            </div>
+                            <div flex layout="row">
+                                <div flex="40"></div>
+                                <div flex="20">
+                                    <span class="total_orders"><b>Total Orders: [[ctrl.totalItems]]</b></span>
+                                </div>
+                                <div flex="40"></div>
+                            </div>
+                            <div flex layout="column">
+                                <div flex layout="row">
+                                    <div flex="10"></div>
+                                    <div flex="80">
+                                            <table align="center" id="dashTable" ng-show="ctrl.totalItems">
+                                            <thead>
+                                                <th>Client</th>
+                                                <th>Incoming Date</th>
+                                                <th>Challan Number</th>   
+                                                <th>Garment Type</th>
+                                                <th>Work Type</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </thead>
+                                            <h2 ng-show="ctrl.show_err" style="text-align: center;">
+                                                [[ctrl.message]]
+                                            </h2>
+                                            <md-progress-circular ng-hide="ctrl.show_err" layout="column" ng-show="ctrl.loadSpinner" class="md-warn md-hue-3" md-diameter="40"></md-progress-circular>
+                                            <tbody>
+                                                <tr ng-repeat="order in ctrl.order_data" class="zones">
+                                                    <td>[[order.client_name]]</td>
+                                                    <td>[[order.incoming_date]]</td>
+                                                    <td>[[order.client_challan_number]]</td>   
+                                                    <td>[[order.garment_type]]</td>
+                                                    <td>[[order.work_type]]</td>
+                                                    <td>[[order.status]]</td>
+                                                    <td>
+                                                        <section layout="row">
+                                                            <section layout="column">
+                                                                <md-button class="defaultcase md-primary" layout="row" layout-align="start center" ng-click="ctrl.getOrderFullView($event, order.id)">View</md-button>
+                                                                <md-button class="defaultcase md-primary" layout="row" layout-align="end center" ng-click="ctrl.redirectToOrderPage(order.id)" ng-disabled="ctrl.has_order_permissions == 'False'">Edit</md-button>
+                                                            </section>
+                                                            <section layout="column">
+                                                                <md-button ng-repeat="next_status_tuple in order.next_status" ng-hide="order.next_status === null" ng-disabled="next_status_tuple.is_allowed == false" class="defaultcase md-primary" layout="row" layout-align="start center" ng-click="ctrl.moveToNextStage($event, order.id, next_status_tuple.value, has_next_status_form)">[[next_status_tuple.name]]</md-button>
+                                                            </section>
+                                                        </section>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <section layout="row" layout-align="end center" layout-wrap ng-show="ctrl.totalItems">
+                                            <pagination
+                                              ng-model="currentPage"
+                                              total-items="totalItems"
+                                              items-per-page="itemsPerPage"
+                                              boundary-links="true"
+                                              ng-change = "ctrl.loadOrderData()">
+                                            </pagination>
                                         </section>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <section layout="row" layout-align="space-between center" layout-wrap>
-                            <span><b>Total orders:[[ctrl.totalItems]]</b></span>
-                            <pagination
-                              ng-model="currentPage"
-                              total-items="totalItems"
-                              items-per-page="itemsPerPage"
-                              boundary-links="true"
-                              ng-change = "ctrl.loadOrderData()">
-                            </pagination>
-                        </section>
+                                    </div>
+                                    <div flex="10"></div>
+                                </div>
+                            </div>
+                        </div>
                     </md-content>
                 </div>
             </div>
