@@ -122,6 +122,7 @@ class RenderDialog(APIView):
 		if not request.user.is_authenticated():
 			return redirect('login')
 
+		print(request.data)
 		from portal.helper import order_next_status_model_map
 		import portal.models
 		
@@ -272,7 +273,7 @@ class CreateEditOrder(APIView):
 		if not request.user.is_authenticated():
 			return redirect('login')
 
-		DashboardOrders = request.data.get('order_data', None)
+		order_data = request.data.get('order_data', None)
 		order_id = request.data.get('order_id', None)
 		client_name = order_data.get('client_name', None)
 		incoming_date = order_data.get('incoming_date', None)
