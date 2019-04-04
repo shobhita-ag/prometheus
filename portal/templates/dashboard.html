@@ -476,7 +476,7 @@
                                         <section layout="row" layout-align="end center" layout-wrap ng-show="ctrl.totalItems">
                                             <pagination
                                               ng-model="currentPage"
-                                              total-items="totalItems"
+                                              total-items="ctrl.totalItems"
                                               items-per-page="itemsPerPage"
                                               boundary-links="true"
                                               ng-change = "ctrl.loadOrderData()">
