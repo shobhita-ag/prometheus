@@ -1,4 +1,5 @@
 import datetime
+import six
 
 order_next_status_map = {
 	1: [("Send for Shooting", 2)],
@@ -121,6 +122,7 @@ def get_next_status(order, request_user):
 	return None
 
 def convert_utc_into_ist(timestamp):
+
 	if type(timestamp) == unicode:
 		timestamp = datetime.datetime.strptime(str(timestamp), '%Y-%m-%dT%H:%M:%S.%fZ') + datetime.timedelta(minutes=330)
 	elif type(timestamp) == str:

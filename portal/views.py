@@ -337,8 +337,8 @@ class GetOrder(APIView):
 class GetOrderFullView(APIView):
 
 	def get(self, request):
-		#if not request.user.is_authenticated():
-		#	return redirect('login')
+		if not request.user.is_authenticated():
+			return redirect('login')
 		order_id = request.GET.get('order_id', None)
 		if order_id:
 			try:

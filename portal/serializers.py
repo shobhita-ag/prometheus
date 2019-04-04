@@ -64,10 +64,14 @@ class OrderSerializer(serializers.ModelSerializer):
 		return datetime.datetime.strftime(obj.incoming_date, '%Y/%m/%d')
 
 	def get_garment_type(self, obj):
-		return obj.garment_type.id
+		if obj.garment_type:
+			return obj.garment_type.id
+		return None
 
 	def get_shoot_type(self, obj):
-		return obj.shoot_type.id
+		if obj.shoot_type:
+			return obj.shoot_type.id
+		return None
 
 	def get_shoot_sub_type(self, obj):
 		if obj.shoot_sub_type:
@@ -75,28 +79,50 @@ class OrderSerializer(serializers.ModelSerializer):
 		return None
 
 	def get_work_type(self, obj):
-		return obj.work_type.id
+		if obj.work_type:
+			return obj.work_type.id
+		return None
 
 	def get_size(self, obj):
-		return obj.size.id
+		if obj.size:
+			return obj.size.id
+		return None
 
 	def get_outer_page_quality(self, obj):
-		return obj.outer_page_quality.id
+		if obj.outer_page_quality:
+			return obj.outer_page_quality.id
+		return None
 
 	def get_inner_page_quality(self, obj):
-		return obj.inner_page_quality.id
+		if obj.inner_page_quality:
+			return obj.inner_page_quality.id
+		return None
 
 	def get_binding_type(self, obj):
-		return obj.binding_type.id									
+		if obj.binding_type:
+			return obj.binding_type.id
+		return None
 
 	def get_status(self, obj):
-		return obj.get_status_display()
+		if obj.status:
+			return obj.get_status_display()
+		return None
 
 	def get_has_blouse_stitch(self, obj):
-		return str(obj.has_blouse_stitch)
+			if obj.has_blouse_stitch == True:
+				return str(obj.has_blouse_stitch)
+			elif obj.has_blouse_stitch == False:
+				return str(obj.has_blouse_stitch)
+			else:
+				return None
 
 	def get_has_photo_lamination(self, obj):
-		return str(obj.has_photo_lamination)		
+			if obj.has_photo_lamination == True:
+				return str(obj.has_photo_lamination)
+			elif obj.has_photo_lamination == False:
+				return str(obj.has_photo_lamination)
+			else:
+				return None
 
 
 class OrderFullViewSerializer(serializers.ModelSerializer):
@@ -124,46 +150,67 @@ class OrderFullViewSerializer(serializers.ModelSerializer):
 		return datetime.datetime.strftime(obj.incoming_date, '%I %b, %Y')
 
 	def get_garment_type(self, obj):
-		return obj.garment_type.type_name
+		if obj.garment_type:
+			return obj.garment_type.type_name
+		return None
 
 	def get_shoot_type(self, obj):
-		return obj.shoot_type.type_name
+		if obj.shoot_type:
+			return obj.shoot_type.type_name
+		return None
 
 	def get_shoot_sub_type(self, obj):
-		if obj.shoot_sub_type:
-			return obj.shoot_sub_type.sub_type_name
-		return "N/A"
+		if obj.shoot_type:
+			if obj.shoot_sub_type:
+				return obj.shoot_sub_type.sub_type_name
+			return "N/A"
+		return None
 
 	def get_work_type(self, obj):
-		return obj.work_type.type_name
+		if obj.work_type:
+			return obj.work_type.type_name
+		return None
 
 	def get_size(self, obj):
-		return obj.size.sub_type_name
+		if obj.size:
+			return obj.size.sub_type_name
+		return None
 
 	def get_outer_page_quality(self, obj):
-		return obj.outer_page_quality.quality_name
+		if obj.outer_page_quality:
+			return obj.outer_page_quality.quality_name
+		return None
 
 	def get_inner_page_quality(self, obj):
-		return obj.inner_page_quality.quality_name
+		if obj.inner_page_quality:
+			return obj.inner_page_quality.quality_name
+		return None
 
 	def get_binding_type(self, obj):
-		return obj.binding_type.type_name
+		if obj.binding_type:
+			return obj.binding_type.type_name
+		return None
 
 	def get_status(self, obj):
-		return obj.get_status_display()
+		if obj.status:
+			return obj.get_status_display()
+		return None
 
 	def get_has_blouse_stitch(self, obj):
-		if obj.has_blouse_stitch == True:
-			return "Yes"
-		else:
-			return "No"
+			if obj.has_blouse_stitch == True:
+				return "Yes"
+			elif obj.has_blouse_stitch == False:
+				return "No"
+			else:
+				return None
 
 	def get_has_photo_lamination(self, obj):
-		if obj.has_photo_lamination == True:
-			return "Yes"
-		else:
-			return "No"
-
+			if obj.has_photo_lamination == True:
+				return "Yes"
+			elif obj.has_photo_lamination == False:
+				return "No"
+			else:
+				return None
 
 
 class ShootSerializer(serializers.ModelSerializer):
