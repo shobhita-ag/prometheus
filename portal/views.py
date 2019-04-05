@@ -441,7 +441,7 @@ class DashboardOrders(APIView):
 			if client:
 				orders = orders.filter(client_name_id=client)
 
-			orders = orders.order_by('-incoming_date')
+			orders = orders.order_by('incoming_date')
 
 			pages = Paginator(orders, page_size)
 			page_count = pages.num_pages
