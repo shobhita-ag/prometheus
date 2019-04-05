@@ -18,10 +18,13 @@
                               </div>
                           </md-input-container>
                           <!-- <md-input-container> -->
-                              <div flex-gt-xs>
-                                  <md-datepicker ng-model="data.dialog_data.bill_date" md-placeholder="Bill Date" required>
+<!--                               <div flex-gt-sm>
+                                  <md-datepicker name="creation_date" ng-model="data.dialog_data.bill_date" md-placeholder="Bill Date" required style="position: absolute;">
                                   </md-datepicker>
-                              </div>
+                                  <div style="position: relative;" ng-messages = "bill_creation_dialog_form.creation_date.$error">
+                                      <div class="date_label" ng-message = "required">*required</div>
+                                  </div>                                  
+                              </div> -->
                           <!-- </md-input-container> -->
                       </div>
                       <md-button class="md-raised pull-right" style="width:30%;" type="reset" ng-click="cancel()">

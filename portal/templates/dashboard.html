@@ -311,7 +311,6 @@
                 self.moveToNextStage = function(event, order_id, next_status, has_next_status_form) {
                     //get dialog data only for shooting, cutting and printing status since only they have data to be pre-populated
                     self.next_status = next_status;
-                    // if ([2,3,6,7,16,17].includes(next_status)) {
                         $http({
                             url: '/get_dialog_data?next_status=' + String(next_status) + '&order_id=' + order_id,
                             method: "GET"
@@ -326,9 +325,6 @@
                             var response_data = error_response.data;
                             commonUtility.displayErrorMsg(response_data["response"]);
                         });
-                    // } else {
-                    //     self.openStatusDialog(event, order_id, next_status);
-                    // }
                 };
 
                 self.openStatusDialog = function(event, order_id, next_status) {
@@ -419,25 +415,25 @@
                                     <md-select name="status_filter" ng-model="ctrl.status_filter" ng-change="ctrl.loadOrderData()" placeholder="Select a status to filter">
                                         <md-option value="1">Order Created</md-option>
                                         <md-option value="2">Sent to Shooting</md-option>
-                                        <md-option value="3">Shooting Completed</md-option>
+                                        <md-option value="3">Pose Selection Pending</md-option>
                                         <md-option value="4">Pose Selection Started</md-option>
-                                        <md-option value="5">Pose Selection Completed</md-option>
+                                        <md-option value="5">Pose Cutting Pending</md-option>
                                         <md-option value="6">Pose Cutting Started</md-option>
-                                        <md-option value="7">Pose Cutting Completed</md-option>
+                                        <md-option value="7">Layout Creation Pending</md-option>
                                         <md-option value="8">Layout Creation Started</md-option>
-                                        <md-option value="9">Layout Creation Completed</md-option>
+                                        <md-option value="9">Color Correction Pending</md-option>
                                         <md-option value="10">Color Correction Started</md-option>
-                                        <md-option value="11">Color Correction Completed</md-option>
+                                        <md-option value="11">Dummy Sent Pending</md-option>
                                         <md-option value="12">Dummy Sent to Client</md-option>
                                         <md-option value="13">Changes Taken</md-option>
                                         <md-option value="14">Changes Implementation Started</md-option>
-                                        <md-option value="15">Changes Implementation Completed</md-option>
+                                        <md-option value="15">Waiting to send to print</md-option>
                                         <md-option value="16">Printing Started</md-option>
-                                        <md-option value="17">Printing Completed</md-option>
+                                        <md-option value="17">In Delivery</md-option>
                                         <md-option value="18">Bill Created</md-option>
                                         <md-option value="19">Delivery Done</md-option>
-                                    </md-select>
-                                </div>       
+                                    </md-select>  
+                                </div>
                                 <div flex="5"></div>     
                                 <div flex="10" style="text-align-last: end;">
                                     <md-button class="create_order" ng-click="ctrl.resetFilters()">

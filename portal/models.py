@@ -84,21 +84,21 @@ class Order(TimeStampedModel):
 	STATUS_CHOICES = (
 		(1, "Order Created"),
 		(2, "Sent to Shooting"),
-		(3, "Shooting Completed"),
+		(3, "Pose Selection Pending"),
 		(4, "Pose Selection Started"),
-		(5, "Pose Selection Completed"),
+		(5, "Pose Cutting Pending"),
 		(6, "Pose Cutting Started"),
-		(7, "Pose Cutting Completed"),
+		(7, "Layout Creation Pending"),
 		(8, "Layout Creation Started"),
-		(9, "Layout Creation Completed"),
+		(9, "Color Correction Pending"),
 		(10, "Color Correction Started"),
-		(11, "Color Correction Completed"),
+		(11, "Dummy Sent Pending"),
 		(12, "Dummy Sent to Client"),
 		(13, "Changes Taken"),
 		(14, "Changes Implementation Started"),
-		(15, "Changes Implementation Completed"),
+		(15, "Waiting to send to print"),
 		(16, "Printing Started"),
-		(17, "Printing Completed"),
+		(17, "In Delivery"),
 		(18, "Bill Created"),
 		(19, "Delivery Done"),
 	)
@@ -198,8 +198,8 @@ class Shoot(TimeStampedModel):
 	model_name = models.CharField(max_length=128)
 	shoot_date = models.DateField(null=True)
 	shoot_user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	start_date = models.DateField(null=True)
-	end_date = models.DateField(null=True)
+	start_date = models.DateTimeField(null=True)
+	end_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		return self.order
@@ -208,8 +208,8 @@ class Shoot(TimeStampedModel):
 class PoseSelection(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	pose_selection_user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	start_date = models.DateField(null=True)
-	end_date = models.DateField(null=True)
+	start_date = models.DateTimeField(null=True)
+	end_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		return self.order
@@ -219,8 +219,8 @@ class PoseCutting(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	pose_cutting_user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	number_of_poses = models.IntegerField()
-	start_date = models.DateField(null=True)
-	end_date = models.DateField(null=True)
+	start_date = models.DateTimeField(null=True)
+	end_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		return self.order
@@ -229,8 +229,8 @@ class PoseCutting(TimeStampedModel):
 class Layout(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	layout_user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	start_date = models.DateField(null=True)
-	end_date = models.DateField(null=True)
+	start_date = models.DateTimeField(null=True)
+	end_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		return self.order
@@ -239,8 +239,8 @@ class Layout(TimeStampedModel):
 class ColorCorrection(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	color_correction_user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	start_date = models.DateField(null=True)
-	end_date = models.DateField(null=True)
+	start_date = models.DateTimeField(null=True)
+	end_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		return self.order
@@ -249,7 +249,7 @@ class ColorCorrection(TimeStampedModel):
 class DummySent(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	dummy_sent_user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	dummy_sent_date = models.DateField(null=True)
+	dummy_sent_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		return self.order
@@ -258,7 +258,7 @@ class DummySent(TimeStampedModel):
 class ChangesTaken(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	changes_taken_user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	changes_taken_date = models.DateField(null=True)
+	changes_taken_date = models.DateTimeField(null=True)
 	remarks = models.CharField(max_length=128, null=True)
 
 	def __unicode__(self):
@@ -268,8 +268,8 @@ class ChangesTaken(TimeStampedModel):
 class ChangesImplementation(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	changes_implementation_user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	start_date = models.DateField(null=True)
-	end_date = models.DateField(null=True)
+	start_date = models.DateTimeField(null=True)
+	end_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		return self.order	
@@ -279,8 +279,8 @@ class Printing(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	folder_number = models.CharField(max_length=128)
 	printing_user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	start_date = models.DateField(null=True)
-	end_date = models.DateField(null=True)
+	start_date = models.DateTimeField(null=True)
+	end_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		return self.order
@@ -290,7 +290,7 @@ class BillCreation(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	bill_creation_user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	bill_number = models.CharField(max_length=128)
-	bill_date = models.DateField()
+	bill_date = models.DateTimeField()
 
 	def __unicode__(self):
 		return self.order	
@@ -299,7 +299,7 @@ class BillCreation(TimeStampedModel):
 class Delivery(TimeStampedModel):
 	order = models.ForeignKey(Order)
 	delivery_user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	delivery_date = models.DateField(null=True)
+	delivery_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		return self.order

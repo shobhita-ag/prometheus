@@ -237,10 +237,10 @@ class RenderDialog(APIView):
 				try:
 					BillCreation.objects.get(id = dialog_data.get('id'))
 					BillCreation.objects.filter(id = dialog_data.get('id')).update(order_id = order_id, bill_creation_user = user,
-					bill_number = dialog_data.get('bill_number', None), bill_date = convert_utc_into_ist(dialog_data.get('bill_date', None)))
+					bill_number = dialog_data.get('bill_number', None), bill_date = date)
 				except BillCreation.DoesNotExist:
 					BillCreation.objects.create(order_id = order_id, bill_creation_user = user,
-					bill_number = dialog_data.get('bill_number', None), bill_date = convert_utc_into_ist(dialog_data.get('bill_date', None)))
+					bill_number = dialog_data.get('bill_number', None), bill_date = date)
 
 			elif next_status == 19:
 				try:
