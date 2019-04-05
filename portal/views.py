@@ -299,7 +299,7 @@ class CreateEditOrder(APIView):
 
 		try:
 			if order_id == "None":
-				Order.objects.create(client_name = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
+				Order.objects.create(client_name_id = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
 				garment_type_id = garment_type, garment_count = garment_count, shoot_type_id = shoot_type, shoot_sub_type_id = shoot_sub_type,
 				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
@@ -307,7 +307,7 @@ class CreateEditOrder(APIView):
 				return Response({"response": "Order created"}, status=status.HTTP_201_CREATED)
 
 			else:
-				Order.objects.filter(id=order_id).update(client_name = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
+				Order.objects.filter(id=order_id).update(client_name_id = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
 				garment_type_id = garment_type, garment_count = garment_count, shoot_type_id = shoot_type, shoot_sub_type_id = shoot_sub_type,
 				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
