@@ -406,16 +406,13 @@
                                     </md-button>
                                 </div>
                                 <div flex="20">
-                                    <md-input-container class="md-block">
-                                        <label>Client Name</label>
-                                            <md-select name="client_name" ng-model="ctrl.client_filter" ng-change="ctrl.loadOrderData()" placeholder="Select a client name to filter">
-                                                <md-option value="[[client.id]]" ng-repeat="client in ctrl.clients">
-                                                    [[client.client_name]]
-                                            </md-option>
-                                        </md-select>
+                                    <md-select name="client_name" ng-model="ctrl.client_filter" ng-change="ctrl.loadOrderData()" placeholder="Select a client name to filter">
+                                        <md-option value="[[client.id]]" ng-repeat="client in ctrl.clients">
+                                            [[client.client_name]]
+                                        </md-option>
+                                    </md-select>
                                         <!-- <input type="text" name="client_name_filter" ng-model="ctrl.client_name_filter" ng-keyup="$event.keyCode == 13 && ctrl.loadOrderData()"> -->
                                         <!-- <div class="hint">Search for client name and press Enter</div> -->
-                                    </md-input-container>
                                 </div>
                                 <div flex="5"></div>
                                 <div flex="20">
