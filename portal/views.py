@@ -22,7 +22,7 @@ from portal.models import GarmentType, ShootType, ShootSubType, WorkType, WorkSu
 						Layout, Shoot, ColorCorrection, Printing, BillCreation, Delivery, DummySent
 from portal.serializers import OrderFullViewSerializer, OrderSerializer, OrderSummarySerializer, ShootSerializer, PoseSelectionSerializer, PoseCuttingSerializer, \
 								LayoutSerializer, ColorCorrectionSerializer, DummySentSerializer, ChangesImplementationSerializer, \
-								ChangesTakenSerializer, BillCreationSerializer, DeliverySerializer, PrintingSerializer
+								ChangesTakenSerializer, BillCreationSerializer, DeliverySerializer, PrintingSerializer, Client
 from portal.helper import convert_utc_into_ist
 
 class HomePage(TemplateView):
@@ -424,7 +424,7 @@ class DashboardOrders(APIView):
 			user = request.user
 			order_status = request.GET.get('status', None)
 			incoming_date = request.GET.get('incoming_date', None)
-			client_name = request.GET.get('client_name', None)
+			client = request.GET.get('client', None)
 
 			page_size = request.GET.get('page_size', 10)
 			page_index = request.GET.get('page_index', 1)
@@ -438,8 +438,8 @@ class DashboardOrders(APIView):
 			if incoming_date:
 				orders = orders.filter(incoming_date = incoming_date)
 
-			if client_name:
-				orders = orders.filter(client_name__icontains=client_name)
+			if client:
+				orders = orders.filter(client_name_id=client)
 
 			orders = orders.order_by('-incoming_date')
 
@@ -457,6 +457,18 @@ class DashboardOrders(APIView):
 			return Response({"response" : "Error while fetching orders"}, status = status.HTTP_400_BAD_REQUEST)
 
 
+class GetClients(APIView):
+
+	def get(self, request):
+		if not request.user.is_authenticated():
+			return redirect('login')
+		try:
+			clients = Client.objects.all().values()
+			return Response({"clients": clients}, status=status.HTTP_200_OK)
+		except Exception as e:
+			return Response({"response" : "Error while fetching clients"}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class GetDropDownData(APIView):
 
 	def get(self, request):
@@ -469,6 +481,7 @@ class GetDropDownData(APIView):
 		shoot_sub_types = ShootSubType.objects.all().values()
 		page_qualities = PageQuality.objects.all().values()
 		binding_types = BindingType.objects.all().values()
+		clients = Client.objects.all().values()
 
 		dropdowndata = {}
 		dropdowndata['garment_types'] = garment_types
@@ -478,6 +491,7 @@ class GetDropDownData(APIView):
 		dropdowndata['shoot_sub_types'] = shoot_sub_types
 		dropdowndata['page_qualities'] = page_qualities
 		dropdowndata['binding_types'] = binding_types
+		dropdowndata['clients'] = clients
 		return Response({"dropdowndata": dropdowndata}, status=status.HTTP_200_OK)
 
 

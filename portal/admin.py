@@ -1,7 +1,7 @@
 from django.contrib import admin
 from portal.models import GarmentType, ShootType, ShootSubType, WorkType, WorkSubType, \
 						PageQuality, BindingType, Order, PoseCutting, PoseSelection, ChangesTaken, ChangesImplementation, \
-						Layout, Shoot, ColorCorrection, Printing, BillCreation, Delivery, DummySent
+						Layout, Shoot, ColorCorrection, Printing, BillCreation, Delivery, DummySent, Client
 
 # Register your models here.
 
@@ -24,4 +24,5 @@ admin.site.register(Shoot)
 admin.site.register(BillCreation)
 admin.site.register(ChangesImplementation)
 admin.site.register(DummySent)
+admin.site.register(Client)
 

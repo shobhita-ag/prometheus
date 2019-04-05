@@ -253,7 +253,7 @@
 
                 self.resetFilters = function() {
                     self.status_filter = "";
-                    self.client_name_filter = "";
+                    self.client_filter = "";
                     self.loadOrderData();
                 };
 
@@ -267,8 +267,8 @@
                     if (self.status_filter && self.status_filter !== "") {
                         url = url + "&status=" + self.status_filter;
                     }
-                    if (self.client_name_filter && self.client_name_filter !== "") {
-                        url = url + "&client_name=" + self.client_name_filter;
+                    if (self.client_filter && self.client_filter !== "") {
+                        url = url + "&client=" + self.client_filter;
                     }
                     
                     $http({
@@ -289,7 +289,24 @@
                     });
                 };
 
+                self.getClients = function() {
+                    $http({
+                        url: "get_clients",
+                        method: "GET"
+                    })
+                    .then(function(response){
+                        self.show_err = false;
+                        self.loadSpinner = false;
+                        var response_data = response.data;
+                        self.clients = response_data["clients"];
+                    }, function(error_response) {
+                        var response_data = error_response.data;
+                        commonUtility.displayErrorMsg(response_data["response"]);
+                    });
+                }
+
                 self.loadOrderData();
+                self.getClients();
 
                 self.moveToNextStage = function(event, order_id, next_status, has_next_status_form) {
                     //get dialog data only for shooting, cutting and printing status since only they have data to be pre-populated
@@ -390,8 +407,14 @@
                                 </div>
                                 <div flex="20">
                                     <md-input-container class="md-block">
-                                        <input type="text" name="client_name_filter" ng-model="ctrl.client_name_filter" ng-keyup="$event.keyCode == 13 && ctrl.loadOrderData()">
-                                        <div class="hint">Search for client name and press Enter</div>
+                                        <label>Client Name</label>
+                                            <md-select name="client_name" ng-model="ctrl.client_filter" ng-change="ctrl.loadOrderData()" placeholder="Select a client name to filter">
+                                                <md-option value="[[client.id]]" ng-repeat="client in ctrl.clients">
+                                                    [[client.client_name]]
+                                            </md-option>
+                                        </md-select>
+                                        <!-- <input type="text" name="client_name_filter" ng-model="ctrl.client_name_filter" ng-keyup="$event.keyCode == 13 && ctrl.loadOrderData()"> -->
+                                        <!-- <div class="hint">Search for client name and press Enter</div> -->
                                     </md-input-container>
                                 </div>
                                 <div flex="5"></div>
@@ -489,7 +512,7 @@
                         </div>
                     </md-content>
                     <md-divider></md-divider>
-                    <footer layout="row" layout-align="center center">
+                    <footer style="position:relative;top:68vh;" layout="row" layout-align="center center">
                         &copy; 2019 by Prometheus
                     </footer>
                 </div>

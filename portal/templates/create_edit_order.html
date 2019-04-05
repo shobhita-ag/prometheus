@@ -229,6 +229,7 @@
                         $scope.shoot_sub_types = self.dropdowndata['shoot_sub_types'];
                         $scope.page_qualities = self.dropdowndata['page_qualities'];
                         $scope.binding_types = self.dropdowndata['binding_types'];
+                        $scope.clients = self.dropdowndata['clients'];
 
                         // Initialise drop downs
                         if (self.order_data) {
@@ -307,7 +308,12 @@
                                                 <div layout="row" class="md-inline-form">
                                                     <md-input-container class="md-block" flex-gt-sm>
                                                         <label>Client Name</label>
-                                                        <input required type="text" name="client_name" ng-model="ctrl.order_data.client_name">
+                                                        <md-select name="client_name" ng-model="ctrl.order_data.client_name" required>
+                                                            <md-option value="[[client.id]]" ng-repeat="client in clients">
+                                                                [[client.client_name]]
+                                                            </md-option>
+                                                        </md-select>
+                                                        <!-- <input required type="text" name="client_name" ng-model="ctrl.order_data.client_name"> -->
                                                         <div ng-messages = "create_edit_order_form.client_name.$error">
                                                             <div ng-message = "required">*required</div>
                                                         </div>

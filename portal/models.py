@@ -55,9 +55,15 @@ class BindingType(TimeStampedModel):
 	def __unicode__(self):
 		return self.type_name
 
+class Client(TimeStampedModel):
+	client_name = models.CharField(max_length=128)
+
+	def __unicode__(self):
+		return self.client_name
+
 
 class Order(TimeStampedModel):
-	client_name = models.CharField(max_length=128)
+	client_name = models.ForeignKey(Client)
 	incoming_date = models.DateField()
 	client_challan_number = models.CharField(max_length=128, null=True)
 	garment_type = models.ForeignKey(GarmentType)

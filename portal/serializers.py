@@ -3,12 +3,13 @@ from rest_framework import serializers
 
 from portal.models import GarmentType, ShootType, ShootSubType, WorkType, WorkSubType, \
 						PageQuality, BindingType, Order, PoseCutting, PoseSelection, ChangesTaken, ChangesImplementation, \
-						Layout, Shoot, ColorCorrection, Printing, BillCreation, Delivery, DummySent
+						Layout, Shoot, ColorCorrection, Printing, BillCreation, Delivery, DummySent, Client
 
 
 class OrderSummarySerializer(serializers.ModelSerializer):
 
 	incoming_date = serializers.SerializerMethodField()
+	client_name = serializers.SerializerMethodField()
 	garment_type = serializers.SerializerMethodField()
 	work_type = serializers.SerializerMethodField()
 	status = serializers.SerializerMethodField()
@@ -18,6 +19,9 @@ class OrderSummarySerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Order
 		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'garment_type', 'work_type', 'status', 'next_status', 'has_next_status_form')
+
+	def get_client_name(self, obj):
+		return obj.client_name.client_name
 	
 	def get_incoming_date(self, obj):
 		return datetime.datetime.strftime(obj.incoming_date, '%I %b, %Y')
@@ -42,6 +46,7 @@ class OrderSummarySerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
 
 	incoming_date = serializers.SerializerMethodField()
+	client_name = serializers.SerializerMethodField()
 	garment_type = serializers.SerializerMethodField()
 	shoot_type = serializers.SerializerMethodField()
 	shoot_sub_type = serializers.SerializerMethodField()
@@ -59,6 +64,9 @@ class OrderSerializer(serializers.ModelSerializer):
 		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'garment_type', 'garment_count', 'shoot_type',
 			'shoot_sub_type', 'has_blouse_stitch', 'work_type', 'size', 'page_count', 'outer_page_quality', 'inner_page_quality',
 			'binding_type', 'book_name', 'book_quantity', 'has_photo_lamination', 'status')
+
+	def get_client_name(self, obj):
+		return obj.client_name.id
 
 	def get_incoming_date(self, obj):
 		return datetime.datetime.strftime(obj.incoming_date, '%Y/%m/%d')
@@ -128,6 +136,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderFullViewSerializer(serializers.ModelSerializer):
 
 	incoming_date = serializers.SerializerMethodField()
+	client_name = serializers.SerializerMethodField()
 	garment_type = serializers.SerializerMethodField()
 	shoot_type = serializers.SerializerMethodField()
 	shoot_sub_type = serializers.SerializerMethodField()
@@ -145,6 +154,9 @@ class OrderFullViewSerializer(serializers.ModelSerializer):
 		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'garment_type', 'garment_count', 'shoot_type',
 			'shoot_sub_type', 'has_blouse_stitch', 'work_type', 'size', 'page_count', 'outer_page_quality', 'inner_page_quality',
 			'binding_type', 'book_name', 'book_quantity', 'has_photo_lamination', 'status')
+
+	def get_client_name(self, obj):
+		return obj.client_name.client_name
 
 	def get_incoming_date(self, obj):
 		return datetime.datetime.strftime(obj.incoming_date, '%I %b, %Y')
