@@ -1,4 +1,6 @@
 import datetime
+import boto
+from django.conf import settings
 
 from django.shortcuts import render
 from django.db import models, transaction
@@ -24,6 +26,9 @@ from portal.serializers import OrderFullViewSerializer, OrderSerializer, OrderSu
 								LayoutSerializer, ColorCorrectionSerializer, DummySentSerializer, ChangesImplementationSerializer, \
 								ChangesTakenSerializer, BillCreationSerializer, DeliverySerializer, PrintingSerializer, Client
 from portal.helper import convert_utc_into_ist
+
+from boto.s3.key import Key
+from boto.s3.connection import S3Connection
 
 class HomePage(TemplateView):
 	def get(self, request):
@@ -299,12 +304,12 @@ class CreateEditOrder(APIView):
 
 		try:
 			if order_id == "None":
-				Order.objects.create(client_name_id = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
+				createdOrder = Order.objects.create(client_name_id = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
 				garment_type_id = garment_type, garment_count = garment_count, shoot_type_id = shoot_type, shoot_sub_type_id = shoot_sub_type,
 				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
 				has_photo_lamination = has_photo_lamination)
-				return Response({"response": "Order created"}, status=status.HTTP_201_CREATED)
+				return Response({"response": "Order created", "order_id" : createdOrder.id}, status=status.HTTP_201_CREATED)
 
 			else:
 				Order.objects.filter(id=order_id).update(client_name_id = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
@@ -312,7 +317,7 @@ class CreateEditOrder(APIView):
 				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
 				has_photo_lamination = has_photo_lamination)
-				return Response({"response": "Order updated"}, status=status.HTTP_200_OK)
+				return Response({"response": "Order updated", "order_id" : order_id}, status=status.HTTP_200_OK)
 		except Exception as e:
 			print("Order creation failed:" + str(e))
 			return Response({"response": "Error in order creation"}, status=status.HTTP_400_BAD_REQUEST)
@@ -493,6 +498,44 @@ class GetDropDownData(APIView):
 		dropdowndata['binding_types'] = binding_types
 		dropdowndata['clients'] = clients
 		return Response({"dropdowndata": dropdowndata}, status=status.HTTP_200_OK)
+
+
+class OrderImageUpload(APIView):
+
+	def post(self, request):
+		if not request.user.is_authenticated():
+			return redirect('login')
+
+		file_data = request.FILES.get('file', None)
+		order_id = request.data.get('order_id', None)
+		now = datetime.datetime.now()
+
+		try:
+			connection = S3Connection(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY, host=settings.AWS_MUMBAI_REGION_HOST)
+			bucket = connection.get_bucket(settings.AWS_STORAGE_MUMBAI_BUCKET_NAME)
+			key = Key(bucket)
+
+			#store new file
+			keyname = "order_id:" + str(order_id) + "-timestamp:" + str(now)
+			key.name = keyname
+			sent = key.set_contents_from_string(file_data.read(), headers={'Content-Type': 'image/jpeg'})
+			key.set_acl('public-read')
+			if sent:
+				#delete old s3 file for the order if any
+				orderData = Order.objects.get(id=order_id)
+				if orderData.image_path:
+					key.name = orderData.image_path.split("order-images/",1)[1]
+					bucket.delete_key(key)
+
+				#set new file path in order table
+				s3path = "s3://" + settings.AWS_STORAGE_MUMBAI_BUCKET_NAME + "/" + keyname
+				Order.objects.filter(id=order_id).update(image_path = s3path)
+				return Response({"response" : "File uploaded successfully"}, status=status.HTTP_200_OK)
+			else:
+				return Response({"response" : "File could not be uploaded"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		except Exception as e:
+			print("Error while fetching orders:" + str(e))
+			return Response({"response" : "File could not be uploaded"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 '''

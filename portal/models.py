@@ -2,6 +2,7 @@ from django.db import models
 from django_fsm import FSMIntegerField, transition
 from model_utils.models import TimeStampedModel
 from django.conf import settings
+from PIL import Image
 
 # Create your models here.
 
@@ -80,6 +81,7 @@ class Order(TimeStampedModel):
 	book_name = models.CharField(max_length=128, null=True)
 	book_quantity = models.IntegerField(null=True)
 	has_photo_lamination = models.NullBooleanField(null=True)
+	image_path = models.TextField(null=True)
 
 	STATUS_CHOICES = (
 		(1, "Order Created"),
