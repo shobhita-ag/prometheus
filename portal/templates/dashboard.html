@@ -455,6 +455,7 @@
                                     <div flex="80">
                                             <table align="center" id="dashTable" ng-show="ctrl.totalItems">
                                             <thead>
+                                                <th>Order Id</th>
                                                 <th>Client</th>
                                                 <th>Incoming Date</th>
                                                 <th>Challan Number</th>   
@@ -466,9 +467,10 @@
                                             <h2 ng-show="ctrl.show_err" style="text-align: center;">
                                                 [[ctrl.message]]
                                             </h2>
-                                            <md-progress-circular ng-hide="ctrl.show_err" layout="column" ng-show="ctrl.loadSpinner" class="md-warn md-hue-3" md-diameter="40"></md-progress-circular>
+                                            <center><md-progress-circular ng-hide="ctrl.show_err" layout="column" ng-show="ctrl.loadSpinner" class="md-hue-2" md-diameter="40"></md-progress-circular></center>
                                             <tbody>
                                                 <tr ng-repeat="order in ctrl.order_data" class="zones">
+                                                    <td>[[order.id]]</td>
                                                     <td>[[order.client_name]]</td>
                                                     <td>[[order.incoming_date]]</td>
                                                     <td>[[order.client_challan_number]]</td>   
