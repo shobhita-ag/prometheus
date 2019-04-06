@@ -82,6 +82,7 @@ class Order(TimeStampedModel):
 	book_quantity = models.IntegerField(null=True)
 	has_photo_lamination = models.NullBooleanField(null=True)
 	image_path = models.TextField(null=True)
+	s3_key = models.TextField(null=True)
 
 	STATUS_CHOICES = (
 		(1, "Order Created"),

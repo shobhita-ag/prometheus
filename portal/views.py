@@ -520,16 +520,17 @@ class OrderImageUpload(APIView):
 			key.name = keyname
 			sent = key.set_contents_from_string(file_data.read(), headers={'Content-Type': 'image/jpeg'})
 			key.set_acl('public-read')
+			image_path = key.generate_url(expires_in=0, query_auth=False)
+
 			if sent:
 				#delete old s3 file for the order if any
 				orderData = Order.objects.get(id=order_id)
-				if orderData.image_path:
-					key.name = orderData.image_path.split("order-images/",1)[1]
+				if orderData.s3_key:
+					key.name = orderData.s3_key
 					bucket.delete_key(key)
 
 				#set new file path in order table
-				s3path = "s3://" + settings.AWS_STORAGE_MUMBAI_BUCKET_NAME + "/" + keyname
-				Order.objects.filter(id=order_id).update(image_path = s3path)
+				Order.objects.filter(id=order_id).update(image_path = image_path, s3_key = keyname)
 				return Response({"response" : "File uploaded successfully"}, status=status.HTTP_200_OK)
 			else:
 				return Response({"response" : "File could not be uploaded"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
