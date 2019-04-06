@@ -268,30 +268,29 @@
                     })
                     .then(function(response){
                         var response_data = response.data;
-
-                        // Upload file
-                        Upload.upload({
-                            url: '/order_image_upload',
-                            data: {file: file, order_id: response_data['order_id']},
-                        })
-                        .then(function(response){
+                        if (file) {
+                            // Upload file
+                            Upload.upload({
+                                url: '/order_image_upload',
+                                data: {file: file, order_id: response_data['order_id']},
+                            })
+                            .then(function(response){
+                                self.show_err = false;
+                                self.loadSpinner = false;
+                                commonUtility.displayErrorMsg(response_data["response"]);
+                                $window.location.href = "/";
+                            }, function(error_response) {
+                                commonUtility.displayErrorMsg(response_data["response"]);
+                                self.show_err = true;
+                                self.loadSpinner = false;
+                            });
+                        } else {
                             self.show_err = false;
                             self.loadSpinner = false;
-                            var response_data = response.data;
                             commonUtility.displayErrorMsg(response_data["response"]);
                             $window.location.href = "/";
-                        }, function(error_response) {
-                            var response_data = error_response.data;
-                            commonUtility.displayErrorMsg(response_data["response"]);
-                            self.show_err = true;
-                            self.loadSpinner = false;
-                        });
+                        }
 
-                        // uploadFile(file, response_data['order_id']);
-                        // self.show_err = false;
-                        // self.loadSpinner = false;
-                        // commonUtility.displayErrorMsg(response_data["response"]);
-                        // $window.location.href = "/";
                     }, function(error_response) {
                         var response_data = error_response.data;
                         commonUtility.displayErrorMsg(response_data["response"]);
