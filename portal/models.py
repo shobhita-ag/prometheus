@@ -9,14 +9,14 @@ from PIL import Image
 class GarmentType(TimeStampedModel):
 	type_name = models.CharField(max_length=128)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.type_name
 
 
 class ShootType(TimeStampedModel):
 	type_name = models.CharField(max_length=128)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.type_name
 
 
@@ -24,14 +24,14 @@ class ShootSubType(TimeStampedModel):
 	shoot_type = models.ForeignKey(ShootType)
 	sub_type_name = models.CharField(max_length=128)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.shoot_type.type_name + " - " + self.sub_type_name
 
 
 class WorkType(TimeStampedModel):
 	type_name = models.CharField(max_length=128)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.type_name
 
 
@@ -39,27 +39,27 @@ class WorkSubType(TimeStampedModel):
 	work_type = models.ForeignKey(WorkType)
 	sub_type_name = models.CharField(max_length=128)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.work_type.type_name + " - " + self.sub_type_name
 
 
 class PageQuality(TimeStampedModel):
 	quality_name = models.CharField(max_length=128)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.quality_name
 
 
 class BindingType(TimeStampedModel):
 	type_name = models.CharField(max_length=128)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.type_name
 
 class Client(TimeStampedModel):
 	client_name = models.CharField(max_length=128)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.client_name
 
 
@@ -184,8 +184,8 @@ class Order(TimeStampedModel):
 		from portal.helper import get_next_status
 		return get_next_status(self, request_user)
 												
-	def __unicode__(self):
-		return self.client_name + " - " + self.client_challan_number
+	def __str__(self):
+		return "{} - order_id:[{}] - {}".format(self.client_name.client_name, str(self.id), str(self.incoming_date))
 
 
 class Shoot(TimeStampedModel):
@@ -204,8 +204,8 @@ class Shoot(TimeStampedModel):
 	start_date = models.DateTimeField(null=True)
 	end_date = models.DateTimeField(null=True)
 
-	def __unicode__(self):
-		return self.order
+	def __str__(self):
+		return str(self.order)
 
 
 class PoseSelection(TimeStampedModel):
@@ -214,8 +214,8 @@ class PoseSelection(TimeStampedModel):
 	start_date = models.DateTimeField(null=True)
 	end_date = models.DateTimeField(null=True)
 
-	def __unicode__(self):
-		return self.order
+	def __str__(self):
+		return str(self.order)
 
 
 class PoseCutting(TimeStampedModel):
@@ -225,8 +225,8 @@ class PoseCutting(TimeStampedModel):
 	start_date = models.DateTimeField(null=True)
 	end_date = models.DateTimeField(null=True)
 
-	def __unicode__(self):
-		return self.order
+	def __str__(self):
+		return str(self.order)
 
 
 class Layout(TimeStampedModel):
@@ -235,8 +235,8 @@ class Layout(TimeStampedModel):
 	start_date = models.DateTimeField(null=True)
 	end_date = models.DateTimeField(null=True)
 
-	def __unicode__(self):
-		return self.order
+	def __str__(self):
+		return str(self.order)
 
 
 class ColorCorrection(TimeStampedModel):
@@ -245,8 +245,8 @@ class ColorCorrection(TimeStampedModel):
 	start_date = models.DateTimeField(null=True)
 	end_date = models.DateTimeField(null=True)
 
-	def __unicode__(self):
-		return self.order
+	def __str__(self):
+		return str(self.order)
 
 
 class DummySent(TimeStampedModel):
@@ -254,8 +254,8 @@ class DummySent(TimeStampedModel):
 	dummy_sent_user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	dummy_sent_date = models.DateTimeField(null=True)
 
-	def __unicode__(self):
-		return self.order
+	def __str__(self):
+		return str(self.order)
 
 
 class ChangesTaken(TimeStampedModel):
@@ -264,8 +264,8 @@ class ChangesTaken(TimeStampedModel):
 	changes_taken_date = models.DateTimeField(null=True)
 	remarks = models.CharField(max_length=128, null=True)
 
-	def __unicode__(self):
-		return self.order
+	def __str__(self):
+		return str(self.order)
 
 
 class ChangesImplementation(TimeStampedModel):
@@ -274,8 +274,8 @@ class ChangesImplementation(TimeStampedModel):
 	start_date = models.DateTimeField(null=True)
 	end_date = models.DateTimeField(null=True)
 
-	def __unicode__(self):
-		return self.order	
+	def __str__(self):
+		return str(self.order)
 
 
 class Printing(TimeStampedModel):
@@ -285,8 +285,8 @@ class Printing(TimeStampedModel):
 	start_date = models.DateTimeField(null=True)
 	end_date = models.DateTimeField(null=True)
 
-	def __unicode__(self):
-		return self.order
+	def __str__(self):
+		return str(self.order)
 
 
 class BillCreation(TimeStampedModel):
@@ -295,8 +295,8 @@ class BillCreation(TimeStampedModel):
 	bill_number = models.CharField(max_length=128)
 	bill_date = models.DateTimeField()
 
-	def __unicode__(self):
-		return self.order	
+	def __str__(self):
+		return str(self.order)
 
 
 class Delivery(TimeStampedModel):
@@ -304,6 +304,6 @@ class Delivery(TimeStampedModel):
 	delivery_user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	delivery_date = models.DateTimeField(null=True)
 
-	def __unicode__(self):
-		return self.order
+	def __str__(self):
+		return str(self.order)
 

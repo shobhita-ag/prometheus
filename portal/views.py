@@ -1,6 +1,8 @@
 import datetime
 import boto
+import pytz
 from django.conf import settings
+from django.utils.timezone import make_aware
 
 from django.shortcuts import render
 from django.db import models, transaction
@@ -137,6 +139,13 @@ class RenderDialog(APIView):
 		date = convert_utc_into_ist(request.data.get('date', None))
 		next_status = request.data.get('next_status', None)
 		next_status = int(next_status)
+		# print(date)
+
+		# date = make_aware(date)
+
+		# asiatimezone = pytz.timezone('Asia/Kolkata')
+		# asiatimezone.localize(date)
+		# print(date)
 
 		try:
 			# create next_status's table entry
@@ -437,6 +446,9 @@ class DashboardOrders(APIView):
 
 			orders = Order.objects.select_related('garment_type', 'work_type').all()
 
+			#filter out orders that are delivered
+			orders = orders.exclude(status = 19)
+
 			if order_status:
 				orders = orders.filter(status = order_status)
 
@@ -537,6 +549,33 @@ class OrderImageUpload(APIView):
 		except Exception as e:
 			print("Error while fetching orders:" + str(e))
 			return Response({"response" : "File could not be uploaded"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DeleteOrder(APIView):
+
+	@transaction.atomic
+	def post(self, request):
+		if not request.user.is_authenticated():
+			return redirect('login')
+
+		order_id = request.data.get('order_id', None)
+		try:
+			Shoot.objects.filter(order_id = order_id).delete()
+			PoseSelection.objects.filter(order_id = order_id).delete()
+			Shoot.PoseCutting.filter(order_id = order_id).delete()
+			Layout.objects.filter(order_id = order_id).delete()
+			ColorCorrection.objects.filter(order_id = order_id).delete()
+			DummySent.objects.filter(order_id = order_id).delete()
+			ChangesTaken.objects.filter(order_id = order_id).delete()
+			ChangesImplementation.objects.filter(order_id = order_id).delete()
+			Printing.objects.filter(order_id = order_id).delete()
+			BillCreation.objects.filter(order_id = order_id).delete()
+			Delivery.objects.filter(order_id = order_id).delete()
+
+			Order.objects.filter(id = order_id).delete()
+			return Response({"response" : "Order deleted successfully"}, status=status.HTTP_200_OK)
+		except Exception as e:
+			return Response({"response" : "Order could not be deleted"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 '''

@@ -11,6 +11,8 @@ table#dashTable td {
   text-align: left;
   border: 1px solid #ddd;
   padding: 8px;
+  padding-bottom: 0px;
+  padding-top: 0px;
 }
 
 table#dashTable th {
@@ -26,6 +28,29 @@ table#dashTable tr:nth-child(even){
 }
 
 table#dashTable {
+  border-collapse: collapse;
+}
+
+table#fullviewtable td {
+  font-size: 14px;
+  text-align: left;
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table#fullviewtable th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table#fullviewtable tr:nth-child(even){
+  background-color: #f2f2f2;
+}
+
+table#fullviewtable {
   border-collapse: collapse;
 }
 
