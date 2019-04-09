@@ -296,6 +296,9 @@
                         commonUtility.displayErrorMsg(response_data["response"]);
                         self.show_err = true;
                         self.loadSpinner = false;
+                        if (error_response.status == 401) {
+                            $window.location.href = "/";
+                        }
                     });
                 };
 

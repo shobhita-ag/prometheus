@@ -130,3 +130,6 @@ def convert_utc_into_ist(timestamp):
 	elif type(timestamp) == datetime.datetime:
 		timestamp = timestamp + datetime.timedelta(minutes=330)
 	return timestamp
+
+def convert_utc_datetime_to_ist_string(timestamp):
+	return datetime.datetime.strftime(timestamp + datetime.timedelta(minutes=330), '%d %b, %Y %H:%M:%S')

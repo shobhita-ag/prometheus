@@ -129,7 +129,6 @@ class RenderDialog(APIView):
 		if not request.user.is_authenticated():
 			return redirect('login')
 
-		print(request.data)
 		from portal.helper import order_next_status_model_map
 		import portal.models
 		
@@ -280,12 +279,25 @@ class CreateEditOrder(APIView):
 	def get(self, request):
 		if not request.user.is_authenticated():
 			return redirect('login')
+
 		order_id = request.GET.get('order_id', None)
 		return render(request, context={"order_id": order_id, "ops_user": request.user.username.upper()}, template_name='create_edit_order.html')
 
 	def post(self, request):
 		if not request.user.is_authenticated():
 			return redirect('login')
+
+		# checking user permissions for create/edit order
+		user = request.user
+		from portal.helper import order_status_user_group_permissions_map
+		user_groups = user.groups.all().values_list('id', flat=True)
+		groups_allowed = order_status_user_group_permissions_map[1]
+		is_user_allowed_set = set.intersection(set(groups_allowed), set(user_groups))
+		is_user_allowed = True if len(is_user_allowed_set) > 0 else False
+
+		if not is_user_allowed:
+			return Response({"response": "Unauthorized access"}, status=status.HTTP_401_UNAUTHORIZED)
+		###
 
 		order_data = request.data.get('order_data', None)
 		order_id = request.data.get('order_id', None)
@@ -338,7 +350,6 @@ class GetOrder(APIView):
 		if not request.user.is_authenticated():
 			return redirect('login')
 		order_id = request.GET.get('order_id', None)
-		print(order_id)
 		if order_id:
 			order_id = int(order_id)
 			order = Order.objects.get(id=order_id)
@@ -517,6 +528,18 @@ class OrderImageUpload(APIView):
 	def post(self, request):
 		if not request.user.is_authenticated():
 			return redirect('login')
+
+		# checking user permissions for create/edit order
+		user = request.user
+		from portal.helper import order_status_user_group_permissions_map
+		user_groups = user.groups.all().values_list('id', flat=True)
+		groups_allowed = order_status_user_group_permissions_map[1]
+		is_user_allowed_set = set.intersection(set(groups_allowed), set(user_groups))
+		is_user_allowed = True if len(is_user_allowed_set) > 0 else False
+
+		if not is_user_allowed:
+			return Response({"response": "Unauthorized access"}, status=status.HTTP_401_UNAUTHORIZED)
+		###
 
 		file_data = request.FILES.get('file', None)
 		order_id = request.data.get('order_id', None)
