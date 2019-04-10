@@ -260,6 +260,7 @@
                 $scope.submitForm = function(file) {
                     self.loadSpinner = true;
                     self.message = "";
+                    self.saveDisabled = true;
                     
                     $http({
                         url: "/create_edit_order",
@@ -267,6 +268,7 @@
                         data: {'order_id' : self.order_id, 'order_data' : self.order_data}
                     })
                     .then(function(response){
+
                         var response_data = response.data;
                         if (file) {
                             // Upload file
@@ -277,16 +279,19 @@
                             .then(function(response){
                                 self.show_err = false;
                                 self.loadSpinner = false;
+                                self.saveDisabled = false;
                                 commonUtility.displayErrorMsg(response_data["response"]);
                                 $window.location.href = "/";
                             }, function(error_response) {
                                 commonUtility.displayErrorMsg(response_data["response"]);
                                 self.show_err = true;
                                 self.loadSpinner = false;
+                                self.saveDisabled = false;
                             });
                         } else {
                             self.show_err = false;
                             self.loadSpinner = false;
+                            self.saveDisabled = false;
                             commonUtility.displayErrorMsg(response_data["response"]);
                             $window.location.href = "/";
                         }
@@ -296,6 +301,7 @@
                         commonUtility.displayErrorMsg(response_data["response"]);
                         self.show_err = true;
                         self.loadSpinner = false;
+                        self.saveDisabled = false;
                         if (error_response.status == 401) {
                             $window.location.href = "/";
                         }
@@ -539,7 +545,7 @@
                                                         </div>
                                                     </md-input-container>
                                                 </div>
-                                                <md-button ng-disabled="create_edit_order_form.$invalid" class="md-raised md-warn pull-right" style="width:30%;" type="submit">Save</md-button>
+                                                <md-button ng-disabled="create_edit_order_form.$invalid || ctrl.saveDisabled" class="md-raised md-warn pull-right" style="width:30%;" type="submit">Save</md-button>
                                             </form>
                                         </div>
                                     </div>
