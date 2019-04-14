@@ -19,7 +19,7 @@ class OrderSummarySerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Order
-		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'garment_type', 'work_type', 'status', 'next_status', 'has_next_status_form')
+		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'book_name', 'garment_type', 'garment_count', 'work_type', 'status', 'next_status', 'has_next_status_form')
 
 	def get_client_name(self, obj):
 		return obj.client_name.client_name
