@@ -315,6 +315,7 @@ class CreateEditOrder(APIView):
 		has_blouse_stitch = order_data.get('has_blouse_stitch', None)
 		work_type = order_data.get('work_type', None)
 		size = order_data.get('size', None)
+		photo_size = order_data.get('photo_size', None)
 		page_count = order_data.get('page_count', None)
 		outer_page_quality = order_data.get('outer_page_quality', None)
 		inner_page_quality = order_data.get('inner_page_quality', None)
@@ -327,7 +328,7 @@ class CreateEditOrder(APIView):
 			if order_id == "None":
 				createdOrder = Order.objects.create(client_name_id = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
 				garment_type_id = garment_type, garment_count = garment_count, shoot_type_id = shoot_type, shoot_sub_type_id = shoot_sub_type,
-				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, page_count = page_count, outer_page_quality_id = outer_page_quality,
+				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, photo_size_id = photo_size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
 				has_photo_lamination = has_photo_lamination)
 				return Response({"response": "Order created", "order_id" : createdOrder.id}, status=status.HTTP_201_CREATED)
@@ -335,7 +336,7 @@ class CreateEditOrder(APIView):
 			else:
 				Order.objects.filter(id=order_id).update(client_name_id = client_name, incoming_date = incoming_date, client_challan_number = client_challan_number,
 				garment_type_id = garment_type, garment_count = garment_count, shoot_type_id = shoot_type, shoot_sub_type_id = shoot_sub_type,
-				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, page_count = page_count, outer_page_quality_id = outer_page_quality,
+				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, photo_size_id = photo_size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
 				has_photo_lamination = has_photo_lamination)
 				return Response({"response": "Order updated", "order_id" : order_id}, status=status.HTTP_200_OK)

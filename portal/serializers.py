@@ -53,6 +53,7 @@ class OrderSerializer(serializers.ModelSerializer):
 	shoot_sub_type = serializers.SerializerMethodField()
 	work_type = serializers.SerializerMethodField()
 	size = serializers.SerializerMethodField()
+	photo_size = serializers.SerializerMethodField()
 	has_blouse_stitch = serializers.SerializerMethodField()
 	has_photo_lamination = serializers.SerializerMethodField()
 	outer_page_quality = serializers.SerializerMethodField()
@@ -63,7 +64,7 @@ class OrderSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Order
 		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'garment_type', 'garment_count', 'shoot_type',
-			'shoot_sub_type', 'has_blouse_stitch', 'work_type', 'size', 'page_count', 'outer_page_quality', 'inner_page_quality',
+			'shoot_sub_type', 'has_blouse_stitch', 'work_type', 'size', 'photo_size', 'page_count', 'outer_page_quality', 'inner_page_quality',
 			'binding_type', 'book_name', 'book_quantity', 'has_photo_lamination', 'status')
 
 	def get_client_name(self, obj):
@@ -95,6 +96,11 @@ class OrderSerializer(serializers.ModelSerializer):
 	def get_size(self, obj):
 		if obj.size:
 			return obj.size.id
+		return None
+
+	def get_photo_size(self, obj):
+		if obj.photo_size:
+			return obj.photo_size.id
 		return None
 
 	def get_outer_page_quality(self, obj):
@@ -143,6 +149,7 @@ class OrderFullViewSerializer(serializers.ModelSerializer):
 	shoot_sub_type = serializers.SerializerMethodField()
 	work_type = serializers.SerializerMethodField()
 	size = serializers.SerializerMethodField()
+	photo_size = serializers.SerializerMethodField()
 	has_blouse_stitch = serializers.SerializerMethodField()
 	has_photo_lamination = serializers.SerializerMethodField()
 	outer_page_quality = serializers.SerializerMethodField()
@@ -153,7 +160,7 @@ class OrderFullViewSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Order
 		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'garment_type', 'garment_count', 'shoot_type',
-			'shoot_sub_type', 'has_blouse_stitch', 'work_type', 'size', 'page_count', 'outer_page_quality', 'inner_page_quality',
+			'shoot_sub_type', 'has_blouse_stitch', 'work_type', 'size', 'photo_size', 'page_count', 'outer_page_quality', 'inner_page_quality',
 			'binding_type', 'book_name', 'book_quantity', 'has_photo_lamination', 'status', 'image_path', 's3_key')
 
 	def get_client_name(self, obj):
@@ -187,6 +194,11 @@ class OrderFullViewSerializer(serializers.ModelSerializer):
 	def get_size(self, obj):
 		if obj.size:
 			return obj.size.sub_type_name
+		return None
+
+	def get_photo_size(self, obj):
+		if obj.photo_size:
+			return obj.photo_size.sub_type_name
 		return None
 
 	def get_outer_page_quality(self, obj):

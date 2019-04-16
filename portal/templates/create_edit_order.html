@@ -88,6 +88,7 @@
                 font-size: 10px;
                 font-weight: normal;
                 color: rgba(0,0,0,0.54);
+                margin-left: 2px;
             }
             footer {
                 height: 50px;
@@ -171,7 +172,11 @@
                         }
                     }
                     $scope.work_sub_types = work_sub_types;
-                    //self.order_data.size = null;
+
+                    //set photo size = null, if work_type is set to 'only photo'
+                    if (self.order_data.work_type == 3) { //3 is the value of only photo work_type
+                        self.order_data.photo_size = '';
+                    }
                 };
 
                 self.shootTypeChange = function() {
@@ -238,6 +243,14 @@
                         $scope.page_qualities = self.dropdowndata['page_qualities'];
                         $scope.binding_types = self.dropdowndata['binding_types'];
                         $scope.clients = self.dropdowndata['clients'];
+
+                        //setting drop down data for 'only photo' worktype
+                        $scope.onlyphoto_worksubtypes = []
+                        for (var i = 0; i < $scope.work_sub_types.length; i++) {
+                            if ($scope.work_sub_types[i].work_type_id === 3) { //3 is the value of only photo work_type
+                                $scope.onlyphoto_worksubtypes.push($scope.work_sub_types[i]);
+                            }
+                        }
 
                         // Initialise drop downs
                         if (self.order_data) {
@@ -379,13 +392,48 @@
                                                         <label class="file_label">Order Image</label>
                                                         <input type="file" ngf-select ng-model="picFile" name="file"    
                                                                      accept="image/*"
-                                                                     ngf-model-invalid="errorFile" style="margin-top:10px;">
+                                                                     ngf-model-invalid="errorFile" style="margin-top:10px;margin-left:1px;">
 
                                                         <!-- <input type="file" name="pic" accept="image/*"> -->
                                                         <!-- <div ng-messages = "create_edit_order_form.client_challan_number.$error">
                                                             <div ng-message = "required">*required</div>
                                                         </div> -->
                                                     </md-content>
+                                                </div>
+                                                <div layout="row">
+                                                    <md-input-container class="md-block" flex-gt-sm>
+                                                        <label>Work Type</label>
+                                                        <md-select name="work_type" ng-model="ctrl.order_data.work_type" ng-change="ctrl.workTypeChange()" required>
+                                                            <md-option value="[[work_type.id]]" ng-repeat="work_type in work_types">
+                                                                [[work_type.type_name]]
+                                                            </md-option>
+                                                        </md-select>
+                                                        <div ng-messages = "create_edit_order_form.work_type.$error">
+                                                            <div ng-message = "required">*required</div>
+                                                        </div>
+                                                    </md-input-container>
+                                                    <md-input-container class="md-block" flex-gt-sm>
+                                                        <label>Size</label>
+                                                        <md-select name="work_sub_type" ng-model="ctrl.order_data.size" ng-disabled="!ctrl.order_data.work_type">
+                                                            <md-option value="[[work_sub_type.id]]" ng-repeat="work_sub_type in work_sub_types">
+                                                                [[work_sub_type.sub_type_name]]
+                                                            </md-option>
+                                                        </md-select>
+                                                        <!-- <div ng-messages = "create_edit_order_form.work_sub_type.$error">
+                                                            <div ng-message = "required">*required</div>
+                                                        </div>  -->
+                                                    </md-input-container>
+                                                    <md-input-container class="md-block" flex-gt-sm>
+                                                        <label>Photo size</label>
+                                                        <md-select name="photo_size" ng-model="ctrl.order_data.photo_size" ng-disabled="!ctrl.order_data.work_type || ctrl.order_data.work_type == 3">
+                                                            <md-option value="[[work_sub_type.id]]" ng-repeat="work_sub_type in onlyphoto_worksubtypes">
+                                                                [[work_sub_type.sub_type_name]]
+                                                            </md-option>
+                                                        </md-select>
+                                                        <!-- <div ng-messages = "create_edit_order_form.work_sub_type.$error">
+                                                            <div ng-message = "required">*required</div>
+                                                        </div>  -->
+                                                    </md-input-container>
                                                 </div>
                                                 <div layout="row">
                                                     <md-input-container class="md-block" flex-gt-sm>
@@ -430,30 +478,6 @@
                                                             </md-option>
                                                         </md-select>
                                                        <!--  <div ng-messages = "create_edit_order_form.shoot_sub_type.$error">
-                                                            <div ng-message = "required">*required</div>
-                                                        </div>  -->
-                                                    </md-input-container>
-                                                </div>
-                                                <div layout="row">
-                                                    <md-input-container class="md-block" flex-gt-sm>
-                                                        <label>Work Type</label>
-                                                        <md-select name="work_type" ng-model="ctrl.order_data.work_type" ng-change="ctrl.workTypeChange()" required>
-                                                            <md-option value="[[work_type.id]]" ng-repeat="work_type in work_types">
-                                                                [[work_type.type_name]]
-                                                            </md-option>
-                                                        </md-select>
-                                                        <div ng-messages = "create_edit_order_form.work_type.$error">
-                                                            <div ng-message = "required">*required</div>
-                                                        </div>                                      
-                                                    </md-input-container>
-                                                    <md-input-container class="md-block" flex-gt-sm>
-                                                        <label>Size</label>
-                                                        <md-select name="work_sub_type" ng-model="ctrl.order_data.size" ng-disabled="!ctrl.order_data.work_type">
-                                                            <md-option value="[[work_sub_type.id]]" ng-repeat="work_sub_type in work_sub_types">
-                                                                [[work_sub_type.sub_type_name]]
-                                                            </md-option>
-                                                        </md-select>
-                                                        <!-- <div ng-messages = "create_edit_order_form.work_sub_type.$error">
                                                             <div ng-message = "required">*required</div>
                                                         </div>  -->
                                                     </md-input-container>
