@@ -259,6 +259,13 @@
                 self.resetFilters = function() {
                     self.status_filter = "";
                     self.client_filter = "";
+                    if($window.localStorage.getItem("status_filter")) {
+                        $window.localStorage.removeItem("status_filter");
+                    }
+
+                    if($window.localStorage.getItem("client_filter")) {
+                        $window.localStorage.removeItem("client_filter");
+                    }
                     self.loadOrderData();
                 };
 
@@ -274,9 +281,11 @@
 
                     var url = "/dashboard/order_data?page_size=" + $scope.itemsPerPage + "&page_index=" + $scope.currentPage;
                     if (self.status_filter && self.status_filter !== "") {
+                        $window.localStorage.setItem("status_filter",self.status_filter);
                         url = url + "&status=" + self.status_filter;
                     }
                     if (self.client_filter && self.client_filter !== "") {
+                        $window.localStorage.setItem("client_filter",self.client_filter);
                         url = url + "&client=" + self.client_filter;
                     }
                     
@@ -314,8 +323,17 @@
                     });
                 }
 
-                self.loadOrderData();
                 self.getClients();
+
+                if($window.localStorage.getItem("status_filter")) {
+                    self.status_filter = $window.localStorage.getItem("status_filter");
+                }
+
+                if($window.localStorage.getItem("client_filter")) {
+                    self.client_filter = $window.localStorage.getItem("client_filter");
+                }
+
+                self.loadOrderData();
 
                 self.moveToNextStage = function(event, order_id, next_status, has_next_status_form) {
                     //get dialog data only for shooting, cutting and printing status since only they have data to be pre-populated
