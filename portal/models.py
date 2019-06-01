@@ -84,6 +84,7 @@ class Order(TimeStampedModel):
 	has_photo_lamination = models.NullBooleanField(null=True)
 	image_path = models.TextField(null=True)
 	s3_key = models.TextField(null=True)
+	created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 
 	STATUS_CHOICES = (
 		(1, "Order Created"),
@@ -117,7 +118,7 @@ class Order(TimeStampedModel):
 	def shooting_completed(self):
 		pass
 
-	@transition(field=status, source=3, target=4) 
+	@transition(field=status, source=3, target=4)
 	def pose_selection_started(self):
 		pass
 
@@ -127,7 +128,7 @@ class Order(TimeStampedModel):
 
 	@transition(field=status, source=5, target=6)
 	def pose_cutting_started(self):
-		pass   
+		pass
 
 	@transition(field=status, source=6, target=7)
 	def pose_cutting_completed(self):
@@ -147,7 +148,7 @@ class Order(TimeStampedModel):
 
 	@transition(field=status, source=10, target=11)
 	def color_correction_completed(self):
-		pass      
+		pass
 
 	@transition(field=status, source=11, target=12)
 	def dummy_sent_to_client(self):
@@ -171,7 +172,7 @@ class Order(TimeStampedModel):
 
 	@transition(field=status, source=16, target=17)
 	def printing_completed(self):
-		pass  
+		pass
 
 	@transition(field=status, source=17, target=18)
 	def bill_created(self):
@@ -184,7 +185,7 @@ class Order(TimeStampedModel):
 	def get_next_state(self, request_user):
 		from portal.helper import get_next_status
 		return get_next_status(self, request_user)
-												
+
 	def __str__(self):
 		return "{} - order_id:[{}] - {}".format(self.client_name.client_name, str(self.id), str(self.incoming_date))
 

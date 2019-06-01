@@ -259,12 +259,17 @@
                 self.resetFilters = function() {
                     self.status_filter = "";
                     self.client_filter = "";
+                    self.incoming_date_filter = "";
                     if($window.localStorage.getItem("status_filter")) {
                         $window.localStorage.removeItem("status_filter");
                     }
 
                     if($window.localStorage.getItem("client_filter")) {
                         $window.localStorage.removeItem("client_filter");
+                    }
+
+                    if($window.localStorage.getItem("incoming_date_filter")) {
+                        $window.localStorage.removeItem("incoming_date_filter");
                     }
                     self.loadOrderData();
                 };
@@ -288,7 +293,15 @@
                         $window.localStorage.setItem("client_filter",self.client_filter);
                         url = url + "&client=" + self.client_filter;
                     }
-                    
+                    if (self.incoming_date_filter && self.incoming_date_filter !== "") {
+                        year = self.incoming_date_filter.getFullYear();
+                        month = parseInt(self.incoming_date_filter.getMonth(), 10) + 1;
+                        day = self.incoming_date_filter.getDate();
+                        date_str = year + "-" + month + "-" + day;
+                        $window.localStorage.setItem("incoming_date_filter",self.incoming_date_filter);
+                        url = url + "&incoming_date=" + date_str;
+                    }
+
                     $http({
                         url: url,
                         method: "GET"
@@ -331,6 +344,10 @@
 
                 if($window.localStorage.getItem("client_filter")) {
                     self.client_filter = $window.localStorage.getItem("client_filter");
+                }
+
+                if($window.localStorage.getItem("incoming_date_filter")) {
+                    self.incoming_date_filter = new Date($window.localStorage.getItem("incoming_date_filter"));
                 }
 
                 self.loadOrderData();
@@ -423,23 +440,27 @@
                         <div layout="column" style="margin-top: 15px;">
                             <div flex layout="row">
                                 <div flex="10"></div>
-                                <div flex="20">
+                                <div flex="15">
                                     <md-button class="create_order" ng-click="ctrl.redirectToOrderPage('')" ng-disabled="ctrl.has_order_permissions === 'False'">
                                         Create new order
                                     </md-button>
                                 </div>
-                                <div flex="20">
+                                <div flex="15">
                                     <md-select name="client_name" ng-model="ctrl.client_filter" ng-change="ctrl.loadOrderData(1)" placeholder="Select a client name to filter">
-                                        <md-option value="[[client.id]]" ng-repeat="client in ctrl.clients">
+                                        <md-option value="[[client.id]]" ng-repeat="client in ctrl.clients" style="font-size: 14px; !important;">
                                             [[client.client_name]]
                                         </md-option>
                                     </md-select>
                                         <!-- <input type="text" name="client_name_filter" ng-model="ctrl.client_name_filter" ng-keyup="$event.keyCode == 13 && ctrl.loadOrderData()"> -->
                                         <!-- <div class="hint">Search for client name and press Enter</div> -->
                                 </div>
+                                <div flex="15">
+                                    <md-datepicker name="incoming_date" ng-model="ctrl.incoming_date_filter" md-placeholder="Incoming date" required style="position: absolute;" ng-change="ctrl.loadOrderData(1)">
+                                    </md-datepicker>
+                                </div>
                                 <div flex="5"></div>
-                                <div flex="20">
-                                    <md-select name="status_filter" ng-model="ctrl.status_filter" ng-change="ctrl.loadOrderData(1)" placeholder="Select a status to filter">
+                                <div flex="15">
+                                    <md-select name="status_filter" ng-model="ctrl.status_filter" ng-change="ctrl.loadOrderData(1)" placeholder="Select a status to filter" style="font-size: 14px;   !important;">
                                         <md-option value="1">Order Created</md-option>
                                         <md-option value="2">Sent to Shooting</md-option>
                                         <md-option value="3">Pose Selection Pending</md-option>
@@ -459,10 +480,10 @@
                                         <md-option value="17">In Delivery</md-option>
                                         <md-option value="18">Bill Created</md-option>
                                         <!-- <md-option value="19">Delivery Done</md-option> -->
-                                    </md-select>  
+                                    </md-select>
                                 </div>
-                                <div flex="5"></div>     
-                                <div flex="10" style="text-align-last: end;">
+                                <div flex="5"></div>
+                                <div flex="10" >
                                     <md-button class="create_order" ng-click="ctrl.resetFilters()">
                                         RESET FILTERS
                                     </md-button>

@@ -68,7 +68,7 @@ class Logout(APIView):
 	def get(self, request):
 		if request.user.is_authenticated():
 			logout(request)
-		return redirect('login')			
+		return redirect('login')
 
 class Dashboard(APIView):
 
@@ -87,11 +87,11 @@ class Dashboard(APIView):
 
 
 class GetDialogData(APIView):
-	
+
 	def get(self, request):
 		if not request.user.is_authenticated():
 			return redirect('login')
-		
+
 		next_status = request.GET.get('next_status', None)
 		order_id = request.GET.get('order_id', None)
 
@@ -131,7 +131,7 @@ class RenderDialog(APIView):
 
 		from portal.helper import order_next_status_model_map
 		import portal.models
-		
+
 		user = request.user
 		dialog_data = request.data.get('dialog_data', {})
 		order_id = request.data.get('order_id', None)
@@ -330,7 +330,7 @@ class CreateEditOrder(APIView):
 				garment_type_id = garment_type, garment_count = garment_count, shoot_type_id = shoot_type, shoot_sub_type_id = shoot_sub_type,
 				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, photo_size_id = photo_size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
-				has_photo_lamination = has_photo_lamination)
+				has_photo_lamination = has_photo_lamination, created_by = user)
 				return Response({"response": "Order created", "order_id" : createdOrder.id}, status=status.HTTP_201_CREATED)
 
 			else:
@@ -338,7 +338,7 @@ class CreateEditOrder(APIView):
 				garment_type_id = garment_type, garment_count = garment_count, shoot_type_id = shoot_type, shoot_sub_type_id = shoot_sub_type,
 				has_blouse_stitch = has_blouse_stitch, work_type_id = work_type, size_id = size, photo_size_id = photo_size, page_count = page_count, outer_page_quality_id = outer_page_quality,
 				inner_page_quality_id = inner_page_quality, binding_type_id = binding_type, book_name = book_name, book_quantity = book_quantity,
-				has_photo_lamination = has_photo_lamination)
+				has_photo_lamination = has_photo_lamination, created_by = user)
 				return Response({"response": "Order updated", "order_id" : order_id}, status=status.HTTP_200_OK)
 		except Exception as e:
 			print("Order creation failed:" + str(e))
@@ -619,17 +619,14 @@ class DeleteOrder(APIView):
 13. Delivery Done
 14. Search orders - with pagination, filters - status, incoming date
 15. Get work types, garment types, shoot types, page qualities, binding-types, shooting locations, statuses
-16. Get work-subtypes, shoot-subtypes, 
+16. Get work-subtypes, shoot-subtypes,
 '''
-
-       
 
 
 class list_orders(APIView):
 	def post(self, request):
 		filter = request.data.get('filter', None)
 		status_filter = 1
-		
 
 
 

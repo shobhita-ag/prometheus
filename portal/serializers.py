@@ -156,12 +156,13 @@ class OrderFullViewSerializer(serializers.ModelSerializer):
 	inner_page_quality = serializers.SerializerMethodField()
 	binding_type = serializers.SerializerMethodField()
 	status = serializers.SerializerMethodField()
+	created_by = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Order
 		fields = ('id', 'client_name', 'incoming_date', 'client_challan_number', 'garment_type', 'garment_count', 'shoot_type',
 			'shoot_sub_type', 'has_blouse_stitch', 'work_type', 'size', 'photo_size', 'page_count', 'outer_page_quality', 'inner_page_quality',
-			'binding_type', 'book_name', 'book_quantity', 'has_photo_lamination', 'status', 'image_path', 's3_key')
+			'binding_type', 'book_name', 'book_quantity', 'has_photo_lamination', 'status', 'image_path', 's3_key', 'created_by')
 
 	def get_client_name(self, obj):
 		return obj.client_name.client_name
@@ -236,6 +237,12 @@ class OrderFullViewSerializer(serializers.ModelSerializer):
 				return "No"
 			else:
 				return None
+
+	def get_created_by(self, obj):
+		if obj.created_by:
+			return obj.created_by.username
+		else:
+			return None
 
 
 class ShootSerializer(serializers.ModelSerializer):

@@ -198,7 +198,7 @@
                     if (order_id != "None") {
                     	self.loadSpinner = true;
                         self.message = "";
-                        
+
                         $http({
                             url: "/create_edit_order/get_order?order_id=" + order_id,
                             method: "GET"
@@ -225,7 +225,7 @@
                 self.getDropDownData = function() {
                 	self.loadSpinner = true;
                     self.message = "";
-                    
+
                     $http({
                         url: "/create_edit_order/get_drop_down_data",
                         method: "GET"
@@ -255,9 +255,9 @@
                         // Initialise drop downs
                         if (self.order_data) {
                             self.shootTypeChange();
-                            self.workTypeChange();                            
+                            self.workTypeChange();
                         }
-                        
+
                     }, function(error_response) {
                         var response_data = error_response.data;
                         commonUtility.displayErrorMsg(response_data["response"]);
@@ -274,7 +274,7 @@
                     self.loadSpinner = true;
                     self.message = "";
                     self.saveDisabled = true;
-                    
+
                     $http({
                         url: "/create_edit_order",
                         method: "POST",
