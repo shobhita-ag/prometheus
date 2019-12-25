@@ -492,7 +492,7 @@ class GetClients(APIView):
 		if not request.user.is_authenticated():
 			return redirect('login')
 		try:
-			clients = Client.objects.all().values()
+			clients = Client.objects.all().order_by('client_name').values()
 			return Response({"clients": clients}, status=status.HTTP_200_OK)
 		except Exception as e:
 			return Response({"response" : "Error while fetching clients"}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
