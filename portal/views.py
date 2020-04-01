@@ -451,6 +451,7 @@ class DashboardOrders(APIView):
 			order_status = request.GET.get('status', None)
 			incoming_date = request.GET.get('incoming_date', None)
 			client = request.GET.get('client', None)
+                        work_type = request.GET.get('work_type', None)
 
 			page_size = request.GET.get('page_size', 10)
 			page_index = request.GET.get('page_index', 1)
