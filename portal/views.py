@@ -460,7 +460,7 @@ class DashboardOrders(APIView):
 
 			#filter out orders that are delivered
 			orders = orders.exclude(status = 19)
-			active_orders = orders.exclude(status__in = [16,17,18])
+			active_orders = orders.exclude(status__in = [16,17,18]).count
 
 			if order_status:
 				orders = orders.filter(status = order_status)
