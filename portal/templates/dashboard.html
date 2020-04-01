@@ -262,6 +262,7 @@
                 self.resetFilters = function() {
                     self.status_filter = "";
                     self.client_filter = "";
+                    self.worktype_filter = "";
                     self.incoming_date_filter = "";
                     if($window.localStorage.getItem("status_filter")) {
                         $window.localStorage.removeItem("status_filter");
@@ -269,6 +270,10 @@
 
                     if($window.localStorage.getItem("client_filter")) {
                         $window.localStorage.removeItem("client_filter");
+                    }
+
+                    if($window.localStorage.getItem("worktype_filter")) {
+                        $window.localStorage.removeItem("worktype_filter");
                     }
 
                     if($window.localStorage.getItem("incoming_date_filter")) {
@@ -295,6 +300,10 @@
                     if (self.client_filter && self.client_filter !== "") {
                         $window.localStorage.setItem("client_filter",self.client_filter);
                         url = url + "&client=" + self.client_filter;
+                    }
+                    if (self.worktype_filter && self.worktype_filter !== "") {
+                        $window.localStorage.setItem("worktype_filter",self.worktype_filter);
+                        url = url + "&work_type=" + self.worktype_filter;
                     }
                     if (self.incoming_date_filter && self.incoming_date_filter !== "") {
                         year = self.incoming_date_filter.getFullYear();
@@ -340,6 +349,24 @@
                     });
                 }
 
+                self.getWorkTypes = function() {
+                    $http({
+                        url: "get_worktypes",
+                        method: "GET"
+                    })
+                    .then(function(response){
+                        self.show_err = false;
+                        self.loadSpinner = false;
+                        var response_data = response.data;
+                        self.worktypes = response_data["worktypes"];
+                    }, function(error_response) {
+                        var response_data = error_response.data;
+                        commonUtility.displayErrorMsg(response_data["response"]);
+                    });
+                }
+
+                self.getWorkTypes();
+
                 self.getClients();
 
                 if($window.localStorage.getItem("status_filter")) {
@@ -348,6 +375,10 @@
 
                 if($window.localStorage.getItem("client_filter")) {
                     self.client_filter = $window.localStorage.getItem("client_filter");
+                }
+
+                if($window.localStorage.getItem("worktype_filter")) {
+                    self.worktype_filter = $window.localStorage.getItem("worktype_filter");
                 }
 
                 if($window.localStorage.getItem("incoming_date_filter")) {
@@ -443,7 +474,7 @@
                         <md-divider></md-divider>
                         <div layout="column" style="margin-top: 15px;">
                             <div flex layout="row">
-                                <div flex="10"></div>
+                                <div flex="5"></div>
                                 <div flex="15">
                                     <md-button class="create_order" ng-click="ctrl.redirectToOrderPage('')" ng-disabled="ctrl.has_order_permissions === 'False'">
                                         Create new order
@@ -486,13 +517,19 @@
                                         <!-- <md-option value="19">Delivery Done</md-option> -->
                                     </md-select>
                                 </div>
-                                <div flex="5"></div>
+                                <div flex="15">
+                                    <md-select name="worktype" ng-model="ctrl.worktype_filter" ng-change="ctrl.loadOrderData(1)" placeholder="Select work type">
+                                        <md-option value="[[worktype.id]]" ng-repeat="worktype in ctrl.worktypes" style="font-size: 14px; !important;">
+                                            [[worktype.type_name]]
+                                        </md-option>
+                                    </md-select>
+                                </div>
                                 <div flex="10" >
                                     <md-button class="create_order" ng-click="ctrl.resetFilters()">
                                         RESET FILTERS
                                     </md-button>
                                 </div>
-                                <div flex="10"></div>
+                                <div flex="5"></div>
                             </div>
                             <div flex layout="row">
                                 <div flex="30"></div>
@@ -567,7 +604,7 @@
                     </md-content>
                     <md-divider></md-divider>
                     <footer style="position:relative;top:68vh;" layout="row" layout-align="center center">
-                        &copy; 2019 by Prometheus
+                        &copy; 2020 by Prometheus
                     </footer>
                 </div>
             </div>

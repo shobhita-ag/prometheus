@@ -471,6 +471,9 @@ class DashboardOrders(APIView):
 			if client:
 				orders = orders.filter(client_name_id=client)
 
+			if work_type:
+				orders = orders.filter(work_type_id = work_type)
+
 			orders = orders.order_by('incoming_date')
 
 			pages = Paginator(orders, page_size)
@@ -497,6 +500,18 @@ class GetClients(APIView):
 			return Response({"clients": clients}, status=status.HTTP_200_OK)
 		except Exception as e:
 			return Response({"response" : "Error while fetching clients"}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class GetWorkTypes(APIView):
+
+	def get(self, request):
+		if not request.user.is_authenticated():
+			return redirect('login')
+		try:
+			worktypes = WorkType.objects.all().order_by('type_name').values()
+			return Response({"worktypes": worktypes}, status=status.HTTP_200_OK)
+		except Exception as e:
+			return Response({"response" : "Error while fetching work types"}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class GetDropDownData(APIView):

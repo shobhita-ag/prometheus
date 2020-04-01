@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^get_dialog_data$', views.GetDialogData.as_view(), name='get_dialog_data'),
     url(r'^get_order_full_view$', views.GetOrderFullView.as_view(), name='get_order_full_view'),
     url(r'^get_clients$', views.GetClients.as_view(), name='get_clients'),
+    url(r'^get_worktypes$', views.GetWorkTypes.as_view(), name='get_worktypes'),
     url(r'^order_image_upload$', views.OrderImageUpload.as_view(), name='order_image_upload'),
     # url(r'^delete_order$', views.DeleteOrder.as_view(), name='delete_order')
 ]
