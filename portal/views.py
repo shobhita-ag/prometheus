@@ -460,6 +460,7 @@ class DashboardOrders(APIView):
 
 			#filter out orders that are delivered
 			orders = orders.exclude(status = 19)
+			active_orders = orders.exclude(status__in = [16,17,18])
 
 			if order_status:
 				orders = orders.filter(status = order_status)
@@ -479,7 +480,7 @@ class DashboardOrders(APIView):
 
 			total_orders = pages.count
 
-			return Response({"order_data": order_data, "page_count" : page_count, "total_orders" : total_orders}, status=status.HTTP_200_OK)
+			return Response({"order_data": order_data, "page_count" : page_count, "total_orders" : total_orders, "active_orders" : active_orders}, status=status.HTTP_200_OK)
 
 		except Exception as e:
 			print("Error while fetching orders:" + str(e))

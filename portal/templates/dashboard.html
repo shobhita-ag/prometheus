@@ -111,6 +111,9 @@
             span.total_orders {
                 font-size: 20px;
             }
+            span.active_orders {
+                font-size: 20px;
+            }
             span.green {
                 background-color: #87e087;
             }
@@ -312,6 +315,7 @@
                         var response_data = response.data;
                         self.order_data = response_data["order_data"];
                         self.totalItems = response_data["total_orders"];
+                        self.active_orders = response_data["active_orders"];
                     }, function(error_response) {
                         var response_data = error_response.data;
                         commonUtility.displayErrorMsg(response_data["response"]);
@@ -491,11 +495,14 @@
                                 <div flex="10"></div>
                             </div>
                             <div flex layout="row">
-                                <div flex="40"></div>
+                                <div flex="30"></div>
                                 <div flex="20">
                                     <span class="total_orders"><b>Total Orders: [[ctrl.totalItems]]</b></span>
                                 </div>
-                                <div flex="40"></div>
+                                <div flex="20">
+                                    <span class="active_orders"><b>Active Orders: [[ctrl.active_orders]]</b></span>
+                                </div>
+                                <div flex="30"></div>
                             </div>
                             <div flex layout="column">
                                 <div flex layout="row">
